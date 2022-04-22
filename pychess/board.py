@@ -1,4 +1,5 @@
 import sys
+import copy
 import platform
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime,
@@ -11,21 +12,17 @@ import chess
 import setting_chess
 # from position import Position
 from pychess.gameState import GameState
+from pychess.chessAgent import ChessAgent
 # from pychess.ui_board import Ui_ChessBoard
 
 SQR_SIZE = 720/8
 
 
 class ChessBoard(QFrame):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super().__init__(parent)
 
         self.parent = parent
-        # self = Ui_ChessBoarde()
-        # self.setupUi(self)
-
-        # self.draw_squares()
-        # self.setLayout(self.layout)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setContentsMargins(0, 0, 0, 0)
@@ -39,11 +36,12 @@ class ChessBoard(QFrame):
         # self.position = Position(setting_chess.starting_fen)
         self.gamestate = GameState(setting_chess.starting_fen)
         # self.user_is_white = self.parent.user_is_white
+        self.agent = ChessAgent(self.gamestate, 5)
         # self.search = Search(self.position)
-        # self.search_thread = SearchThread(self)
-        self.user_play = True
+        self.search_thread = SearchThread(self)
+        self.agent_play = False
         self.user_is_white = True
-        self.autosave = None
+        self.autosave = True
         self.saved = True
 
         self.undone_stack = []
@@ -58,12 +56,12 @@ class ChessBoard(QFrame):
     #         self.resize(event.size().width(), event.size().width())
     #         self.sqr_size = int(event.size().width() / 8)
 
-    # def start_game(self):
-    #     if self.self_play or self.position.colour == self.user_is_white:
-    #         self.disable_pieces()
-    #         self.search_thread.start()
-    #     else:
-    #         self.enable_pieces()
+    def start_game(self):
+        if self.agent_play or self.gamestate.colour == self.user_is_white:
+            self.disable_pieces()
+            self.search_thread.start()
+        else:
+            self.enable_pieces()
 
     def draw_squares(self):
         for row, rank in enumerate('87654321'):
@@ -80,7 +78,6 @@ class ChessBoard(QFrame):
 
     def place_piece(self, sqr_name, piece):
         col, row = setting_chess.square_to_coords[sqr_name]
-        # print(col, row)
 
         piece_label = PieceLabel(self, piece)
         self.layout.addWidget(piece_label, row, col)
@@ -96,14 +93,16 @@ class ChessBoard(QFrame):
     def set_fen(self, fen):
         # self.position = Position(fen)
         self.gamestate = GameState(fen)
-
+        self.agent = ChessAgent(self.gamestate, 5)
         # self.search = Search(self.position)
         self.refresh_from_state()
 
-    # def set_position(self, position):
-    #     self.position = position
-    #     self.search = Search(self.position)
-    #     self.refresh_from_state()
+    def set_gamestate(self, gamestate):
+        self.gamestate = gamestate
+        self.agent = ChessAgent(self.gamestate, 5)
+        # self.position = position
+        # self.search = Search(self.position)
+        self.refresh_from_state()
 
     def clear(self):
         all_pieces = self.findChildren(QLabel)
@@ -122,39 +121,13 @@ class ChessBoard(QFrame):
             if piece:
                 pieceInt = setting_chess.piece_string_to_int[str(piece)]
                 self.place_piece(sqr_name, pieceInt)
-            # piece = self.position.squares[sqr_index]
-            # sqr_name = chess.SQUARE_NAMES[sqr_index]
-            # if piece:
-            #     self.place_piece(sqr_name, piece)
 
-#     def reset(self):
-#         self.set_fen(common.starting_fen)
-#         self.refresh_from_state()
+    def reset(self):
+        self.set_fen(setting_chess.starting_fen)
+        self.refresh_from_state()
 
 #         self.position.undo_info.clear()
-#         self.undone_stack.clear()
-
-#     def suggest_move(self):
-#         self.disable_pieces()
-
-#         tt_index = self.position.zobrist & 0xFFFF
-#         tt_entry = self.search.tt[tt_index]
-
-#         if tt_entry and tt_entry.zobrist == self.position.zobrist and tt_entry.move and self.position.is_pseudo_legal(tt_entry.move):
-#             move = tt_entry.move
-#         else:
-#             move = self.search.iter_search(time_limit=1)
-#             self.position = self.search.position
-
-#         src_index = (move >> 6) & 0x3F
-#         dst_index = move & 0x3F
-
-#         piece = self.piece_at_square(src_index)
-#         self.piece_glide(piece, dst_index)
-#         self.piece_glide(piece, src_index)
-
-#         self.enable_pieces()
-#         self.refresh_from_state()
+        self.undone_stack.clear()
 
     def highlight(self, sq):
         # If square index given, convert to SAN
@@ -196,21 +169,15 @@ class ChessBoard(QFrame):
             if move.from_square == sqr_index:
                 moves.append(chess.square_name(move.to_square))
 
-        # moves = self.position.get_pseudo_legal_moves()
-        # moves = [x for x in moves if (x >> 6) & 0x3F == sqr_index]
-
-        # # Filter out illegal moves
-        # moves = list(filter(self.position.is_legal, moves))
-
         return moves
 
-#     def disable_pieces(self):
-#         for piece in self.findChildren(QLabel):
-#             piece.is_enabled = False
+    def disable_pieces(self):
+        for piece in self.findChildren(QLabel):
+            piece.is_enabled = False
 
-#     def enable_pieces(self):
-#         for piece in self.findChildren(QLabel):
-#             piece.is_enabled = True
+    def enable_pieces(self):
+        for piece in self.findChildren(QLabel):
+            piece.is_enabled = True
 
     def piece_glide(self, piece, dst_index):
         piece.raise_()
@@ -246,148 +213,175 @@ class ChessBoard(QFrame):
             rook = self.piece_at_square(rook_src)
             self.piece_glide(rook, rook_dst)
 
-#     def move_glide(self, move, is_undo):
-#         src_index = (move >> 6) & 0x3F
-#         dst_index = move & 0x3F
+    def move_glide(self, move, is_undo):
+        src_index = move.from_square
+        dst_index = move.to_square
 
-#         if not is_undo:
-#             piece = self.piece_at_square(src_index)
-#         else:
-#             piece = self.piece_at_square(dst_index)
+        if not is_undo:
+            piece = self.piece_at_square(src_index)
+        else:
+            piece = self.piece_at_square(dst_index)
 
-#         self.piece_glide(piece, src_index if is_undo else dst_index)
+        self.piece_glide(piece, src_index if is_undo else dst_index)
 
-#         if move & (0x3 << 14) == CASTLING:
-#             self.do_rook_castle(dst_index, is_undo)
+        if self.gamestate.is_castling(move):
+            self.do_rook_castle(dst_index, is_undo)
 
-#     def player_move(self, move):
-#         self.disable_pieces()
-#         self.parent.info.button_frame.disable_buttons()
+    def player_move(self, move):
+        self.disable_pieces()
+        # self.parent.info.button_frame.disable_buttons()
 
-#         self.position.make_move(move)
-#         self.refresh_from_state()
+        self.gamestate.make_move(move)
+        self.refresh_from_state()
 
-#         # After a move has been made, the player can no longer redo moves that were undone previously
-#         self.undone_stack.clear()
+        # After a move has been made, the player can no longer redo moves that were undone previously
+        self.undone_stack.clear()
 
-#         # If player is black, increment fullmove number after player's turn
-#         if not self.user_is_white:
-#             self.position.fullmove_number += 1
+        # If player is black, increment fullmove number after player's turn
+        # if not self.user_is_white:
+        #     self.position.fullmove_number += 1
 
-#         self.parent.info.move_frame.update_moves()
+        # self.parent.info.move_frame.update_moves()
 
-#         if self.position.is_game_over():
-#             self.game_over()
-#         else:
-#             self.saved = False
-#             self.search_thread.start()  # Start search thread for computer's move
+        if self.gamestate.is_game_over():
+            self.game_over()
+            print("game over")
+        else:
+            self.saved = False
+            self.search_thread.start()  # Start search thread for computer's move
 
-#     def computer_move(self, move):
-#         self.move_glide(move, False)
+    def computer_move(self, move):
+        self.move_glide(move, False)
 
-#         self.position.make_move(move)
-#         self.refresh_from_state()
+        self.gamestate.make_move(move)
+        self.refresh_from_state()
 
-#         # If computer is black, increment fullmove number after computer's turn
-#         if self.user_is_white:
-#             self.position.fullmove_number += 1
+        # If computer is black, increment fullmove number after computer's turn
+        # if self.user_is_white:
+        #     self.position.fullmove_number += 1
 
-#         self.parent.info.move_frame.update_moves()
+        # self.parent.info.move_frame.update_moves()
 
-#         if self.position.is_game_over():
-#             self.game_over()
-#         else:
-#             if self.autosave:
-#                 self.save()
-#             else:
-#                 self.saved = False
+        if self.gamestate.is_game_over():
+            self.game_over()
+        else:
+            if self.autosave:
+                self.save()
+            else:
+                self.saved = False
 
-#             if self.self_play:
-#                 self.search_thread.start()
-#             else:
-#                 self.enable_pieces()
+            if self.agent_play:
+                self.search_thread.start()
+            else:
+                self.enable_pieces()
 
-#         self.parent.info.button_frame.enable_buttons()
+        # self.parent.info.button_frame.enable_buttons()
 
-#     def game_over(self):
-#         user = self.parent.parent.user
+    def game_over(self):
+        # user = self.parent.user
 
-#         legal_moves = list(filter(self.position.is_legal,
-#                                   self.position.get_pseudo_legal_moves()))
+        # legal_moves = list(filter(self.position.is_legal,
+        #                           self.position.get_pseudo_legal_moves()))
 
-#         if not legal_moves:
-#             # Checkmate
-#             if self.position.is_in_check():
-#                 text = "{} wins by checkmate".format(
-#                     "White" if self.position.colour else "Black")
-#                 if user:
-#                     user.add_win() if self.user_is_white == bool(
-#                         self.position.colour) else user.add_loss()
-#             # Stalemate
-#             else:
-#                 text = "Draw by stalemate"
-#                 if user:
-#                     user.add_draw()
-#         # Fifty-move rule
-#         elif self.position.halfmove_clock >= 100:
-#             text = "Draw by fifty-move rule"
-#             if user:
-#                 user.add_draw()
-#         # Threefold repetition
-#         elif self.position.is_threefold_repetition():
-#             text = "Draw by threefold repetition"
-#             if user:
-#                 user.add_draw()
-#         elif self.position.is_insufficient_material():
-#             text = "Draw by insufficient material"
-#             if user:
-#                 user.add_draw()
+        # if not legal_moves:
+        #     # Checkmate
+        #     if self.position.is_in_check():
+        #         text = "{} wins by checkmate".format(
+        #             "White" if self.position.colour else "Black")
+        #         if user:
+        #             user.add_win() if self.user_is_white == bool(
+        #                 self.position.colour) else user.add_loss()
+        #     # Stalemate
+        #     else:
+        #         text = "Draw by stalemate"
+        #         if user:
+        #             user.add_draw()
+        # # Fifty-move rule
+        # elif self.position.halfmove_clock >= 100:
+        #     text = "Draw by fifty-move rule"
+        #     if user:
+        #         user.add_draw()
+        # # Threefold repetition
+        # elif self.position.is_threefold_repetition():
+        #     text = "Draw by threefold repetition"
+        #     if user:
+        #         user.add_draw()
+        # elif self.position.is_insufficient_material():
+        #     text = "Draw by insufficient material"
+        #     if user:
+        #         user.add_draw()
 
-#         msg_box = QMessageBox()
-#         msg_box.setWindowIcon(QIcon('./assets/icons/pawn_icon.png'))
-#         msg_box.setIcon(QMessageBox.Information)
-#         msg_box.setWindowTitle("Chess")
-#         msg_box.setText(text)
-#         msg_box.setStandardButtons(QMessageBox.Ok)
-#         msg_box.exec_()
+        # Checkmate
+        if self.gamestate.boardPlay.is_checkmate():
+            text = "{} wins by Checkmate".format(
+                "Black" if self.gamestate.colour else "White")
+        # elif self.gamestate.boardPlay.is_check():
+        #     print("check")
 
-#         self.saved = True
+        # Stalemate
+        elif self.gamestate.boardPlay.is_stalemate():
+            text = "Draw by Stalemate"
 
-#     def save(self):
-#         self.parent.parent.user.saved_game = copy.deepcopy(self.position)
-#         self.saved = True
+        elif self.gamestate.boardPlay.is_insufficient_material():
+            text = "Draw by insufficient material"
+
+        # Fifty-move rule
+        elif self.gamestate.boardPlay.is_fifty_moves():
+            text = "Draw by fifty-move rule"
+
+        # Threefold repetition
+        elif self.gamestate.boardPlay.can_claim_threefold_repetition():
+            text = "Draw by threefold repetition"
+        # elif board.is_game_over():
+        #     print("Game Over!")
+
+        msg_box = QMessageBox()
+        msg_box.setWindowIcon(QIcon('./icons/chessMenu/chessIcon.png'))
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Chess")
+        msg_box.setText(text)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
+
+        self.saved = True
+
+    def save(self):
+        self.parent.saved_game = copy.deepcopy(self.gamestate)
+        self.saved = True
 
 
-# # Search algorithm must be run in a separate thread to the main event loop, to prevent the GUI from freezing
-# class SearchThread(QThread):
-#     move_signal = Signal(int)
+# Search algorithm must be run in a separate thread to the main event loop, to prevent the GUI from freezing
+class SearchThread(QThread):
+    move_signal = Signal(chess.Move)
 
-#     def __init__(self, board):
-#         super().__init__()
+    def __init__(self, board):
+        super().__init__()
 
-#         self.board = board
-#         self.move_signal.connect(self.board.computer_move)
+        self.board = board
+        self.move_signal.connect(self.board.computer_move)
 
-#     def run(self):
-#         self.board.disable_pieces()
+    def run(self):
+        self.board.disable_pieces()
 
-#         if self.board.difficulty == 1:
-#             move = self.board.search.iter_search(max_depth=1)  # Depth 1 search
-#         elif self.board.difficulty == 2:
-#             move = self.board.search.iter_search(max_depth=2)  # Depth 2 search
-#         elif self.board.difficulty == 3:
-#             move = self.board.search.iter_search(
-#                 time_limit=0.1)  # 0.1 second search
-#         elif self.board.difficulty == 4:
-#             move = self.board.search.iter_search(
-#                 time_limit=1)  # 1 second search
-#         elif self.board.difficulty == 5:
-#             move = self.board.search.iter_search(
-#                 time_limit=5)  # 5 second search
+        move = self.board.agent.playMove(debug=True)
 
-#         self.board.position = self.board.search.position
+        # if self.board.difficulty == 1:
+        #     move = self.board.search.iter_search(max_depth=1)  # Depth 1 search
+        # elif self.board.difficulty == 2:
+        #     move = self.board.search.iter_search(max_depth=2)  # Depth 2 search
+        # elif self.board.difficulty == 3:
+        #     move = self.board.search.iter_search(
+        #         time_limit=0.1)  # 0.1 second search
+        # elif self.board.difficulty == 4:
+        #     move = self.board.search.iter_search(
+        #         time_limit=1)  # 1 second search
+        # elif self.board.difficulty == 5:
+        #     move = self.board.search.iter_search(
+        #         time_limit=5)  # 5 second search
 
-#         self.move_signal.emit(move)
+        self.board.gamestate = self.board.agent.gamestate
+
+        self.move_signal.emit(move)
 
 
 class PieceLabel(QLabel):
@@ -416,8 +410,7 @@ class PieceLabel(QLabel):
         # Store original piece image
         pixmap = QPixmap('./assets/pieces/{}{}.png'.format('w' if self.is_white else 'b',
                                                            setting_chess.piece_int_to_string[self.piece].lower()))
-        # pixmap = pixmap.scaled(
-        #     64, 64, QtCore.Qt.KeepAspectRatio, Qt.FastTransformation)
+
         self.setPixmap(pixmap)
 
         # When label is scaled, also scale image inside the label
@@ -543,7 +536,6 @@ class PieceLabel(QLabel):
                     self.board.layout.removeWidget(self)
                     row = self.dst_square.y() // self.board.sqr_size
                     col = self.dst_square.x() // self.board.sqr_size
-                    # print(row, col)
                     self.board.layout.addWidget(self, row, col)
 
                     src_sqr_index = chess.parse_square(
@@ -568,12 +560,13 @@ class PieceLabel(QLabel):
                     # move_made = chess.Move.from_uci(from_to)
                     move_made = self.board.gamestate.boardPlay.find_move(
                         src_sqr_index, dst_sqr_index)
+                    # print(self.board.gamestate.boardPlay)
                     # print(move_made.promotion)
 
                     if move_made.promotion is not None:
                         promotion_prompt = QMessageBox()
                         promotion_prompt.setWindowIcon(
-                            QIcon('./assets/icons/pawn_icon.png'))
+                            QIcon('./icons/chessMenu/chessIcon.png'))
                         promotion_prompt.setIcon(QMessageBox.Question)
                         promotion_prompt.setWindowTitle("Chess")
                         promotion_prompt.setText("Choose promotion piece.")
@@ -588,33 +581,29 @@ class PieceLabel(QLabel):
                         promotion_prompt.exec()
 
                         if promotion_prompt.clickedButton() == knight_btn:
-                            # move_made = PROMOTION + KNIGHT_PROMOTION + from_to
                             move_made = self.board.gamestate.boardPlay.find_move(
                                 src_sqr_index, dst_sqr_index, 2)
                             self.setPixmap(
                                 QPixmap('./assets/pieces/{}.png'.format('wn' if self.is_white else 'bn')))
                         elif promotion_prompt.clickedButton() == bishop_btn:
-                            # move_made = PROMOTION + BISHOP_PROMOTION + from_to
                             move_made = self.board.gamestate.boardPlay.find_move(
                                 src_sqr_index, dst_sqr_index, 3)
                             self.setPixmap(
                                 QPixmap('./assets/pieces/{}.png'.format('wb' if self.is_white else 'bb')))
                         elif promotion_prompt.clickedButton() == rook_btn:
-                            # move_made = PROMOTION + ROOK_PROMOTION + from_to
                             move_made = self.board.gamestate.boardPlay.find_move(
                                 src_sqr_index, dst_sqr_index, 4)
                             self.setPixmap(
                                 QPixmap('./assets/pieces/{}.png'.format('wr' if self.is_white else 'br')))
                         elif promotion_prompt.clickedButton() == queen_btn:
-                            # move_made = PROMOTION + QUEEN_PROMOTION + from_to
                             move_made = self.board.gamestate.boardPlay.find_move(
                                 src_sqr_index, dst_sqr_index, 5)
                             self.setPixmap(
                                 QPixmap('./assets/pieces/{}.png'.format('wq' if self.is_white else 'bq')))
-                    elif self.board.gamestate.boardPlay.is_castling(move_made):
+                    elif self.board.gamestate.is_castling(move_made):
                         self.board.do_rook_castle(dst_sqr_index, False)
 
-                    # self.board.player_move(move_made)
+                    self.board.player_move(move_made)
                 else:
                     # Snap back to origin square
                     self.move(self.src_pos)

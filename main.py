@@ -45,14 +45,15 @@ from Comunication import Serial_Comunication_ISUS
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+        self.saved_game = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.board = ChessBoard()
+        self.board = ChessBoard(self)
         # self.info = Info()
 
-        self.maxAngular = 18  # deg/sec
-        self.station = []  # 1-10
+        # self.maxAngular = 18  # deg/sec
+        # self.station = []  # 1-10
 
         # Serial
         self.port = "COM"
@@ -135,11 +136,13 @@ class MainWindow(QMainWindow):
         # self.ui.info_layout.addWidget(self.info)
 
         # Function Page New Game Select
-        self.ui.btn_play_white.clicked.connect(lambda: self.newGame("w", True))
-        self.ui.btn_play_black.clicked.connect(lambda: self.newGame("b", True))
+        self.ui.btn_play_white.clicked.connect(
+            lambda: self.newGame("w", False))
+        self.ui.btn_play_black.clicked.connect(
+            lambda: self.newGame("b", False))
         self.ui.btn_random.clicked.connect(
             lambda: self.newGame(random.choice(["w", "b"]), True))
-        self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, False))
+        self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, True))
 
         # Function Page Setup
         self.ui.duck_layout.addWidget(self.labelPic)
@@ -271,25 +274,25 @@ class MainWindow(QMainWindow):
 
     ## ==> END ##
 
-    def setMaximumAng(self):
-        self.maxAngular = int(self.ui.targetx_4.text())
-        if self.ser.isOpen():
-            print("setMaxAng")
-            self.ui.targetx_5.setText(str(self.maxAngular))
-            self.ser.write([148, self.maxAngular, 255])
+    # def setMaximumAng(self):
+    #     self.maxAngular = int(self.ui.targetx_4.text())
+    #     if self.ser.isOpen():
+    #         print("setMaxAng")
+    #         self.ui.targetx_5.setText(str(self.maxAngular))
+    #         self.ser.write([148, self.maxAngular, 255])
 
-    def setStation(self):
-        self.station.clear()
-        self.station.append(int(self.ui.targetx_7.text()))
-        if self.ser.isOpen():
-            print("setStation")
-            self.ser.write([150, self.station[0], 255])
+    # def setStation(self):
+    #     self.station.clear()
+    #     self.station.append(int(self.ui.targetx_7.text()))
+    #     if self.ser.isOpen():
+    #         print("setStation")
+    #         self.ser.write([150, self.station[0], 255])
 
-    def goStation(self):
-        if self.ser.isOpen():
-            print("goStation")
-            self.ser.write([152, 255])
-            self.ui.targetx_6.setText(str(self.station[0]))
+    # def goStation(self):
+    #     if self.ser.isOpen():
+    #         print("goStation")
+    #         self.ser.write([152, 255])
+    #         self.ui.targetx_6.setText(str(self.station[0]))
 
     # def setnStation(self):
     #     self.station.clear()
@@ -383,13 +386,14 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_newgame_select)
         UIFunctions.labelPage(self, "Choose Side")
 
-    def newGame(self, colour, user_play):
+    def newGame(self, colour, agent_play):
         self.board.set_fen(setting_chess.starting_fen)
-        self.board.user_play = user_play
-        if self.board.user_play:
+        self.board.agent_play = agent_play
+        if self.board.agent_play:
             print("y")
             print(colour)
         self.board.user_is_white = True if colour == 'w' else False
+        self.board.start_game()
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_play_chess)
         UIFunctions.labelPage(self, "Play Game")
 

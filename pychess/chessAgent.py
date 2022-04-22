@@ -2,18 +2,18 @@ import chess
 import chess.polyglot
 import os
 import time
-from evaluation import evaluateBoard, moveValue, checkEndGame
 from multiprocessing import Pool
 from itertools import repeat
 from collections import OrderedDict
+from pychess.evaluation import evaluateBoard, moveValue, checkEndGame
 
 
 class ChessAgent:
 
-    def __init__(self, max_depth=5):  # , gameState
+    def __init__(self, gameState, max_depth=5):
         self.debug_info = {}
 
-        # self.gameState = gameState
+        self.gamestate = gameState
         self.t_start = 0
         self.max_depth = max_depth
         self.mate_Score = 1000000000
@@ -21,16 +21,18 @@ class ChessAgent:
         self.size_table = 1e6
         self.tt_table = OrderedDict()
 
-    def playMove(self, board, debug=True):
+    def playMove(self, debug=True):
 
         self.debug_info.clear()
         self.t_start = time.time()
+        board = self.gamestate.boardPlay
 
         move = self.minimax_root(self.max_depth, board)
 
         self.debug_info["time"] = time.time() - self.t_start
         if debug == True:
             print(f"info {self.debug_info}")
+
         return move
 
     def get_ordered_moves(self, board):

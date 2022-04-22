@@ -5,9 +5,16 @@ class GameState:
 
     def __init__(self, fen):
 
-        # if user_play:
-        #     self.user_side = user_play
 
         self.boardPlay = chess.Board(fen)
 
-        self.user_is_white = True
+        self.colour = True if self.boardPlay.turn == chess.BLACK else False
+
+    def make_move(self, move):
+        self.boardPlay.push(move)
+
+    def is_castling(self, move):
+        return self.boardPlay.is_castling(move)
+
+    def is_game_over(self):
+        return self.boardPlay.is_game_over()

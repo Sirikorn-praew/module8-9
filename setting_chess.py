@@ -3,10 +3,11 @@ import re
 from consts import (W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING, B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK,
                     B_QUEEN, B_KING)
 
-# starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+starting_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 # starting_fen = 'rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1'
-# starting_fen = '8/6P1/7k/5B2/5B1K/8/8/8 w - - 0 1'
-starting_fen = '8/8/5b2/5b1k/8/7K/6p1/8 b - - 0 1'
+# starting_fen = '8/6P1/7k/4B3/4B2K/8/8/8 w - - 0 1'
+# starting_fen = '8/8/8/4b2k/4b3/7K/6p1/8 b - - 0 1'
+# starting_fen = '8/8/5b2/5b1k/8/7K/6p1/8 b - - 0 1'
 regex_square = re.compile(r'[a-h][1-8]')
 
 piece_string_to_int = {'P': W_PAWN,
