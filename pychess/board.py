@@ -10,10 +10,8 @@ from PySide2.QtWidgets import *
 
 import chess
 import setting_chess
-# from position import Position
 from pychess.gameState import GameState
 from pychess.chessAgent import ChessAgent
-# from pychess.ui_board import Ui_ChessBoard
 
 SQR_SIZE = 720/8
 
@@ -33,11 +31,9 @@ class ChessBoard(QFrame):
         self.draw_squares()
         self.setLayout(self.layout)
 
-        # self.position = Position(setting_chess.starting_fen)
         self.gamestate = GameState(setting_chess.starting_fen)
         # self.user_is_white = self.parent.user_is_white
         self.agent = ChessAgent(self.gamestate, 5)
-        # self.search = Search(self.position)
         self.search_thread = SearchThread(self)
         self.agent_play = False
         self.user_is_white = True
@@ -57,7 +53,7 @@ class ChessBoard(QFrame):
     #         self.sqr_size = int(event.size().width() / 8)
 
     def start_game(self):
-        if self.agent_play or self.gamestate.colour == self.user_is_white:
+        if self.agent_play or self.gamestate.colour() == self.user_is_white:
             self.disable_pieces()
             self.search_thread.start()
         else:
@@ -126,7 +122,7 @@ class ChessBoard(QFrame):
         self.set_fen(setting_chess.starting_fen)
         self.refresh_from_state()
 
-#         self.position.undo_info.clear()
+        self.gamestate.undo_info.clear()
         self.undone_stack.clear()
 
     def highlight(self, sq):
@@ -229,7 +225,7 @@ class ChessBoard(QFrame):
 
     def player_move(self, move):
         self.disable_pieces()
-        # self.parent.info.button_frame.disable_buttons()
+        self.parent.info.button_frame.disable_buttons()
 
         self.gamestate.make_move(move)
         self.refresh_from_state()
@@ -237,11 +233,7 @@ class ChessBoard(QFrame):
         # After a move has been made, the player can no longer redo moves that were undone previously
         self.undone_stack.clear()
 
-        # If player is black, increment fullmove number after player's turn
-        # if not self.user_is_white:
-        #     self.position.fullmove_number += 1
-
-        # self.parent.info.move_frame.update_moves()
+        self.parent.info.move_frame.update_moves()
 
         if self.gamestate.is_game_over():
             self.game_over()
@@ -256,11 +248,7 @@ class ChessBoard(QFrame):
         self.gamestate.make_move(move)
         self.refresh_from_state()
 
-        # If computer is black, increment fullmove number after computer's turn
-        # if self.user_is_white:
-        #     self.position.fullmove_number += 1
-
-        # self.parent.info.move_frame.update_moves()
+        self.parent.info.move_frame.update_moves()
 
         if self.gamestate.is_game_over():
             self.game_over()
@@ -314,7 +302,7 @@ class ChessBoard(QFrame):
         # Checkmate
         if self.gamestate.boardPlay.is_checkmate():
             text = "{} wins by Checkmate".format(
-                "Black" if self.gamestate.colour else "White")
+                "Black" if not self.gamestate.colour() else "White")
         # elif self.gamestate.boardPlay.is_check():
         #     print("check")
 
@@ -334,11 +322,14 @@ class ChessBoard(QFrame):
             text = "Draw by threefold repetition"
         # elif board.is_game_over():
         #     print("Game Over!")
+        text = text + '\n' + \
+            f"\nResult: [W] {self.gamestate.boardPlay.result()} [B]"
 
         msg_box = QMessageBox()
         msg_box.setWindowIcon(QIcon('./icons/chessMenu/chessIcon.png'))
         msg_box.setIcon(QMessageBox.Information)
         msg_box.setWindowTitle("Chess")
+        msg_box.setIconPixmap(QPixmap('./icons/chessMenu/game-over.png'))
         msg_box.setText(text)
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec_()

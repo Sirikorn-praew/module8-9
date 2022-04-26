@@ -52,8 +52,9 @@ class ChessAgent:
         key = chess.polyglot.zobrist_hash(board)
         if key in self.tt_table:
             print("Have key in TT_table")
-            move_uci = self.tt_table.get(key)
-            move = chess.Move.from_uci(move_uci)
+            move = self.tt_table.get(key)
+            print(move)
+            # move = chess.Move.from_uci(move_uci)
             return move
 
         # White always wants to maximize and black to minimize

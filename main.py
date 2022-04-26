@@ -36,7 +36,7 @@ from app_modules import *
 # CHESS FILE
 import setting_chess
 from pychess.board import ChessBoard
-# from pychess.info import Info
+from pychess.info import Info
 
 # COMUNICATION
 from Comunication import Serial_Comunication_ISUS
@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.board = ChessBoard(self)
-        # self.info = Info()
+        self.info = Info(self)
 
         # self.maxAngular = 18  # deg/sec
         # self.station = []  # 1-10
@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_new_game.clicked.connect(self.chooseSide)
         self.ui.btn_out_game.clicked.connect(self.backHomeGame)
         self.ui.game_layout.addWidget(self.board)
-        # self.ui.info_layout.addWidget(self.info)
+        self.ui.info_layout.addWidget(self.info)
 
         # Function Page New Game Select
         self.ui.btn_play_white.clicked.connect(
@@ -147,7 +147,11 @@ class MainWindow(QMainWindow):
         # Function Page Setup
         self.ui.duck_layout.addWidget(self.labelPic)
         self.ui.btn_send_startstop.clicked.connect(self.sendStartStop)
+        self.ui.btn_send_home.clicked.connect(self.sendsetHome)
         self.ui.btn_send_joint.clicked.connect(self.sendJoint)
+        self.ui.btn_send_xyz.clicked.connect(self.sendxyz)
+        self.ui.btn_send_grip_open.clicked.connect(self.sendGripOpen)
+        self.ui.btn_send_grip_close.clicked.connect(self.sendGripClose)
 
         self.ui.horizontalSlider_joint_1.valueChanged.connect(
             self.updateAngulaJoint_1_toText)
@@ -356,25 +360,32 @@ class MainWindow(QMainWindow):
         startstop_2 = int(self.ui.checkBox_joint_2.isChecked())
         startstop_3 = int(self.ui.checkBox_joint_3.isChecked())
         startstop_4 = int(self.ui.checkBox_joint_4.isChecked())
-        # print(int(self.ui.checkBox_joint_1.isChecked()))
         ISUS_UART.StartStop_Move(
             startstop_1, startstop_2, startstop_3, startstop_4)
 
+    def sendsetHome(self):
+        ISUS_UART.Home_Configulation(1, 1, 1, 1)
+
     def sendJoint(self):
-        # self.AngulaJoint_1 = int(self.ui.value_angular_joint_1.text())
-        # print(str(self.AngulaJoint_1))
-        # if self.ui.checkBox_joint_1.isChecked():
-        #     joint_1 = self.ui.value_angular_joint_1.value()
-        #     # print("y")
-        # if self.ui.checkBox_joint_2.isChecked():
-        #     joint_2 = self.ui.value_angular_joint_2.value()
-        # self.ui.feedback_angular_joint_1.setText(str(self.AngulaJoint_1))
         self.sendStartStop()
         joint_1 = self.ui.value_angular_joint_1.value()
         joint_2 = self.ui.value_angular_joint_2.value()
         joint_3 = self.ui.value_angular_joint_3.value()
         joint_4 = self.ui.value_angular_joint_4.value()
         ISUS_UART.Joint_Move(joint_1, joint_2, joint_3, joint_4)
+
+    def sendxyz(self):
+        self.sendStartStop()
+        x = self.ui.value_x.value()
+        y = self.ui.value_y.value()
+        z = self.ui.value_z.value()
+        ISUS_UART.XYZ_Move(x, y, z, 0)
+
+    def sendGripOpen(self):
+        ISUS_UART.Grip_Chess(55)
+
+    def sendGripClose(self):
+        ISUS_UART.Grip_Chess(0)
 
     ## ==> END ##
 
@@ -387,6 +398,7 @@ class MainWindow(QMainWindow):
         UIFunctions.labelPage(self, "Choose Side")
 
     def newGame(self, colour, agent_play):
+        self.info.move_frame.clear_moves()
         self.board.set_fen(setting_chess.starting_fen)
         self.board.agent_play = agent_play
         if self.board.agent_play:
@@ -458,8 +470,8 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
-    ISUS_UART.setupUart()
+    # ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
+    # ISUS_UART.setupUart()
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeui.ttf')
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeuib.ttf')
     window = MainWindow()
