@@ -263,7 +263,15 @@ class MainWindow(QMainWindow):
             btnWidget.setStyleSheet(
                 UIFunctions.selectMenu(btnWidget.styleSheet()))
 
-        # PAGE NEW USER
+        # PAGE DETECT
+        if btnWidget.objectName() == "btn_detect":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_detect)
+            UIFunctions.resetStyle(self, "btn_detect")
+            UIFunctions.labelPage(self, "Detection")
+            btnWidget.setStyleSheet(
+                UIFunctions.selectMenu(btnWidget.styleSheet()))
+
+        # PAGE SETUP
         if btnWidget.objectName() == "btn_setup":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_run)
             UIFunctions.resetStyle(self, "btn_setup")

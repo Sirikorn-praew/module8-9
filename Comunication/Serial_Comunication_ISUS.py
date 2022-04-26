@@ -56,7 +56,7 @@ FEEDBACK =			    0x18
 
 # FIELD
 PICK =                  1
-PLACE =                 2
+DROP =                  2
 
 class Uart_ISUS:
     # def __init__(self, port, baudrate, timeout):
@@ -216,13 +216,13 @@ class Uart_ISUS:
     #     self.iPacket[13] = self.Sum(13, self.iPacket)
     #     self.sendIPacket(14)
 
-    def Chess_Pick(self, row, column):
-        self.Field_Move(row, column, PICK)
+    def Chess_Pick(self, rowi, columni, rowf, columnf, name):
+        self.Field_Move(rowi, columni, rowf, columnf, PICK, name)
 
-    def Chess_Place(self, row, column):
-        self.Field_Move(row, column, PLACE)
+    def Chess_Drop(self, rowi, columni, name):
+        self.Field_Move(rowi, columni, 0, 0, DROP, name)
 
-    def Field_Move(self, row, column, type): #t = us
+    def Field_Move(self, rowi, columni, rowf, columnf, type, name): #t = us
         """
                      row
              a  b  c  d  e  f  i  j
@@ -246,7 +246,8 @@ class Uart_ISUS:
         L = 400 #mm
         s = 50
         d = 0
-        row = row.upper()
+        rowi = rowi.upper()
+        rowf = rowf.upper()
         list_num = {"A":1, "B":2, "C":3, "D":4, "E":5, "F":6, "G":7, "H":8}
         # if list_num[row] <= 4:
         #     x = (-((5 - list_num[row])*L)/8) + (s/2)
@@ -257,8 +258,8 @@ class Uart_ISUS:
         #     y = (-((5 - column)*L)/8) + (s/2)
         # elif column >= 5:
         #     y = (((column - 4)*L)/8) - (s/2)
-        y = ((4.5 - list_num[row])*L)/8
-        x = ((column - 4.5)*L)/8
+        y = ((4.5 - list_num[rowi])*L)/8
+        x = ((columni - 4.5)*L)/8
 
         r = self.radius_calculate(x, y)
 
@@ -274,19 +275,24 @@ class Uart_ISUS:
         elif x >= 0 and y < 0:
             d = 360 + d
 
+        name = name.upper()
+        list_name = {"KING":1, "QUEEN":2, "ROOK":3, "KNIGHT":4, "BISHOP":5, "PAWN":6}
+        min_degree = 52
+        max_degree = 70
+        degree = (min_degree + (max_degree - min_degree)*(list_name[name]/6))
         self.iPacket[0] = HEADER1
         self.iPacket[1] = HEADER2
         self.iPacket[2] = 3 + 8
         self.iPacket[3] = WRITE_DATA # Instruction
         self.iPacket[4] = FIELD_CHESS
-        self.iPacket[5] = self.SHIFT_TO_LSB(list_num[row])
-        self.iPacket[6] = self.SHIFT_TO_MSB(list_num[row])
-        self.iPacket[7] = self.SHIFT_TO_LSB(column)
-        self.iPacket[8] = self.SHIFT_TO_MSB(column)
+        self.iPacket[5] = list_num[rowi]
+        self.iPacket[6] = columni
+        self.iPacket[7] = list_num[rowf]
+        self.iPacket[8] = columnf
         self.iPacket[9] = self.SHIFT_TO_LSB(type)
         self.iPacket[10] = self.SHIFT_TO_MSB(type)
-        self.iPacket[11] = self.SHIFT_TO_LSB(0)
-        self.iPacket[12] = self.SHIFT_TO_MSB(0)
+        self.iPacket[11] = self.SHIFT_TO_LSB(self.value_convert(degree))
+        self.iPacket[12] = self.SHIFT_TO_MSB(self.value_convert(degree))
         self.iPacket[13] = self.Sum(13, self.iPacket)
         self.sendIPacket(14)
 

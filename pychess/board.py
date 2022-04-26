@@ -10,8 +10,10 @@ from PySide2.QtWidgets import *
 
 import chess
 import setting_chess
+# from position import Position
 from pychess.gameState import GameState
 from pychess.chessAgent import ChessAgent
+# from pychess.ui_board import Ui_ChessBoard
 
 SQR_SIZE = 720/8
 
@@ -122,7 +124,7 @@ class ChessBoard(QFrame):
         self.set_fen(setting_chess.starting_fen)
         self.refresh_from_state()
 
-        self.gamestate.undo_info.clear()
+        self.gamestate.undo_info.clear() 
         self.undone_stack.clear()
 
     def highlight(self, sq):
@@ -210,6 +212,7 @@ class ChessBoard(QFrame):
             self.piece_glide(rook, rook_dst)
 
     def move_glide(self, move, is_undo):
+
         src_index = move.from_square
         dst_index = move.to_square
 
@@ -263,7 +266,7 @@ class ChessBoard(QFrame):
             else:
                 self.enable_pieces()
 
-        # self.parent.info.button_frame.enable_buttons()
+        self.parent.info.button_frame.enable_buttons()
 
     def game_over(self):
         # user = self.parent.user
@@ -320,7 +323,7 @@ class ChessBoard(QFrame):
         # Threefold repetition
         elif self.gamestate.boardPlay.can_claim_threefold_repetition():
             text = "Draw by threefold repetition"
-        # elif board.is_game_over():
+         # elif board.is_game_over():
         #     print("Game Over!")
         text = text + '\n' + \
             f"\nResult: [W] {self.gamestate.boardPlay.result()} [B]"
@@ -401,7 +404,8 @@ class PieceLabel(QLabel):
         # Store original piece image
         pixmap = QPixmap('./assets/pieces/{}{}.png'.format('w' if self.is_white else 'b',
                                                            setting_chess.piece_int_to_string[self.piece].lower()))
-
+        # pixmap = pixmap.scaled(
+        #     64, 64, QtCore.Qt.KeepAspectRatio, Qt.FastTransformation)
         self.setPixmap(pixmap)
 
         # When label is scaled, also scale image inside the label

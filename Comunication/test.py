@@ -11,6 +11,18 @@ window.title("ISUS CHESS ROBOT")
 
 window.geometry('500x700')
 
+# Dropdown menu options
+options = [
+    "KING", "QUEEN", "ROOK", "KNIGHT", "BISHOP", "PAWN"
+]
+
+option_row = [
+    "A", "B", "C", "D", "E", "F", "G", "H"
+]
+
+option_column = [
+    1, 2, 3, 4, 5, 6, 7, 8
+]
 
 name = ["Joint 1","Joint 2","Joint 3","Joint 4", "Gripper"]
 var_unit = ["[0.00-360.00] Degree","[0.00-360.00] Degree","[0.00-250.00] mm","[0.00-360.00] Degree"]
@@ -34,7 +46,15 @@ var_startstop5 = tk.DoubleVar()
 var_StartStop = [var_startstop1,var_startstop2,var_startstop3,var_startstop4, var_startstop5]
 
 var_filed1 = tk.StringVar()
+var_filed1.set(option_row[0])
 var_filed2 = tk.IntVar()
+var_filed2.set(option_column[0])
+var_filed3 = tk.StringVar()
+var_filed3.set(option_row[0])
+var_filed4 = tk.IntVar()
+var_filed4.set(option_column[0])
+var_chess = tk.StringVar(window)
+var_chess.set(options[0])
 
 def send_command_startstop():
     ISUS_UART.StartStop_Move(var_startstop1.get(),var_startstop2.get(),var_startstop3.get(),var_startstop4.get(), var_startstop5.get())
@@ -55,10 +75,10 @@ def send_command_XYZ():
     ISUS_UART.XYZ_Move(var_x.get(),var_y.get(),var_z.get(),var_roll.get())
 
 def send_command_field_pick():
-    ISUS_UART.Chess_Pick(var_filed1.get(), var_filed2.get())
+    ISUS_UART.Chess_Pick(var_filed1.get(), var_filed2.get(), var_filed3.get(), var_filed4.get(), var_chess.get())
 
-def send_command_field_place():
-    ISUS_UART.Chess_Place(var_filed1.get(), var_filed2.get())
+def send_command_field_drop():
+    ISUS_UART.Chess_Drop(var_filed1.get(), var_filed2.get(), var_chess.get())
 
 if __name__ == '__main__':
 
@@ -106,7 +126,7 @@ if __name__ == '__main__':
     send_command5 = tk.Button(master=window, text="Chess_Pick", command=send_command_field_pick)
     send_command5.place(relx=0.4, rely=0.92)
 
-    send_command5 = tk.Button(master=window, text="Chess_Place", command=send_command_field_place)
+    send_command5 = tk.Button(master=window, text="Chess_Drop", command=send_command_field_drop)
     send_command5.place(relx=0.6, rely=0.92)
 
     # row = ["A", "B", "C", "D", "E", "F", "G", "H"]
@@ -116,15 +136,31 @@ if __name__ == '__main__':
     #         tt = tk.Button(master=window, text=key+str(j), textvariable=var_field[i][j], command=send_command_field)
     #         tt.place(relx=0.6 + 0.04 * i, rely=0.6 - 0.05 * j)
 
-    txt = tk.Label(master=window, text="row")
+    txt = tk.Label(master=window, text="rowi")
     txt.place(relx=0.05, rely=0.7)
-    jv = tk.Entry(window, width=10,textvariable = var_filed1)
+    jv = tk.OptionMenu(window, var_filed1, *option_row)
     jv.place(relx=0.27, rely=0.7)
 
-    txt = tk.Label(master=window, text="column")
+    txt = tk.Label(master=window, text="columni")
     txt.place(relx=0.05, rely=0.75)
-    jv = tk.Entry(window, width=10,textvariable = var_filed2)
+    jv = tk.OptionMenu(window, var_filed2, *option_column)
     jv.place(relx=0.27, rely=0.75)
+
+    txt = tk.Label(master=window, text="rowf")
+    txt.place(relx=0.45, rely=0.7)
+    jv = tk.OptionMenu(window, var_filed3, *option_row)
+    jv.place(relx=0.57, rely=0.7)
+
+    txt = tk.Label(master=window, text="columnf")
+    txt.place(relx=0.45, rely=0.75)
+    jv = tk.OptionMenu(window, var_filed4, *option_column)
+    jv.place(relx=0.57, rely=0.75)
+
+    txt = tk.Label(master=window, text="chess type")
+    txt.place(relx=0.05, rely=0.65)
+    # Create Dropdown menu
+    drop = tk.OptionMenu(window, var_chess, *options)
+    drop.place(relx=0.27, rely=0.65)
     
     window.mainloop()
 
