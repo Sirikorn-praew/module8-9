@@ -99,6 +99,8 @@ class MainWindow(QMainWindow):
                                "url(:/16x16/icons/16x16/cil-home.png)", True)
         UIFunctions.addNewMenu(self, "Chess Game", "btn_game",
                                "url(:/16x16/icons/16x16/cil-gamepad.png)", True)
+        UIFunctions.addNewMenu(self, "Detect", "btn_detect",
+                               "url(:/16x16/icons/16x16/cil-camera.png)", True)
         UIFunctions.addNewMenu(self, "Setup", "btn_setup",
                                "url(:/16x16/icons/16x16/cil-equalizer.png)", True)
         # UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-equalizer.png)", True)
