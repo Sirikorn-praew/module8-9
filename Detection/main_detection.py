@@ -20,14 +20,24 @@ mp_hands = mp.solutions.hands
 
 
 class MediaPipe_check_Hand:
-    def __init__(self, cam_number):
+    def __init__(self):
         # loading trained model
         print('start mp')
+
+    def crop_square(self, img, size, interpolation=cv2.INTER_AREA):
+        h, w = self.img.shape[:2]
+        min_size = np.amin([h, w])
+
+        # Centralize and crop
+        self.crop_img = img[int(h/2-min_size/2):int(h/2+min_size/2),
+                            int(w/2-min_size/2):int(w/2+min_size/2)]
+        self.resized = cv2.resize(
+            crop_img, (self.size, self.size), interpolation=interpolation)
 
     def check_hand(self, image):
 
         # self.ret, self.frame = self.openCam.read()
-        self.frame = image
+        self.frame = crop_square(image, image.shape[0])
         with mp_hands.Hands(
                 min_detection_confidence=0.7,  # 0.7
                 min_tracking_confidence=0.5) as hands:
@@ -52,8 +62,8 @@ class MediaPipe_check_Hand:
                 return 'Hand'
 
 
-cap_top = MediaPipe_check_Hand(0)
-cap_side = MediaPipe_check_Hand(1)
+cap_top = MediaPipe_check_Hand()
+# cap_side = MediaPipe_check_Hand(1)
 
 
 class EfficientNetModel:
@@ -464,9 +474,9 @@ def main_chess_piece(frame_side, frame_top):
     top_data = get_m()
     side_data = get_m()
     print('MediaPipe')
-    print('test1', cap_top.check_hand(frame_top))
-    print('test2', cap_side.check_hand(frame_side))
-    if cap_top.check_hand(frame_top) == 'Hand' or cap_side.check_hand(frame_side) == 'Hand' or cap_top.check_hand(frame_top) == None or cap_side.check_hand(frame_side) == None:
+    # print('test1', cap_top.check_hand(frame_top))
+    # print('test2', cap_side.check_hand(frame_side))
+    if cap_top.check_hand(frame_top) == 'Hand' or cap_top.check_hand(frame_top) == None:
         return None
     try:
         top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
