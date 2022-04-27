@@ -153,10 +153,8 @@ class MainWindow(QMainWindow):
         self.cam_set_label.setPixmap(self.no_sigal)
         self.cam_set_label.setAlignment(Qt.AlignCenter)
 
-        # Function
-        # self.ui.btn_pos_drive_3.clicked.connect(self.setMaximumAng)
-        # self.ui.btn_pos_drive_5.clicked.connect(self.goStation)
-        # self.ui.btn_pos_drive_4.clicked.connect(self.setStation)
+        self.ui.btn_start_process.clicked.connect(self.pageProcess)
+        # Function Page Process
 
         # Function Page Game
         self.ui.btn_new_game.clicked.connect(self.chooseSide)
@@ -335,33 +333,15 @@ class MainWindow(QMainWindow):
 
     ## ==> END ##
 
-    # def setMaximumAng(self):
-    #     self.maxAngular = int(self.ui.targetx_4.text())
-    #     if self.ser.isOpen():
-    #         print("setMaxAng")
-    #         self.ui.targetx_5.setText(str(self.maxAngular))
-    #         self.ser.write([148, self.maxAngular, 255])
+    ########################################################################
+    # START ==> PROCESS FUNCTION
+    ########################################################################
 
-    # def setStation(self):
-    #     self.station.clear()
-    #     self.station.append(int(self.ui.targetx_7.text()))
-    #     if self.ser.isOpen():
-    #         print("setStation")
-    #         self.ser.write([150, self.station[0], 255])
+    def pageProcess(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_all_process)
+        UIFunctions.labelPage(self, "On Process")
 
-    # def goStation(self):
-    #     if self.ser.isOpen():
-    #         print("goStation")
-    #         self.ser.write([152, 255])
-    #         self.ui.targetx_6.setText(str(self.station[0]))
-
-    # def setnStation(self):
-    #     self.station.clear()
-    #     a = self.ui.targetx_8.text()
-    #     b = a.split()
-    #     for i in b:
-    #         self.station.append(i)
-    #     self.station = int(self.ui.targetx_7.text())
+    ## ==> END ##
 
     ########################################################################
     # START ==> SETUP FUNCTION
@@ -583,7 +563,14 @@ class MainWindow(QMainWindow):
         # cv2.imwrite('image_side.jpg', self.image_side)
         # cv2.imwrite('image_top.jpg', self.image_top)
         # fen = main_detection.main_chess_piece(self.image_top, self.image_side)
-        fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
+        # fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
+        fen = None
+        if fen != None:
+            self.ui.status_fen_detect.setText(fen)
+            self.ui.status_detect.setText('Detected!')
+        else:
+            self.ui.status_fen_detect.setText('Value')
+            self.ui.status_detect.setText('sad')
         print(fen)
         self.board_detect.set_fen(fen)
 
