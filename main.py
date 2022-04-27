@@ -30,6 +30,8 @@ import cv2
 import serial
 import chess
 import random
+import numpy as np
+import copy
 
 # GUI FILE
 from app_modules import *
@@ -38,6 +40,9 @@ from app_modules import *
 import setting_chess
 from pychess.board import ChessBoard
 from pychess.info import Info
+
+# DETECTION
+from Detection import main_detection
 
 # COMUNICATION
 from Comunication import Serial_Comunication_ISUS
@@ -53,7 +58,11 @@ class MainWindow(QMainWindow):
         self.video_size = QSize(480, 270)
 
         self.board = ChessBoard(self)
+        self.board.sqr_size = 720/8
         self.info = Info(self)
+
+        self.board_detect = ChessBoard(self)
+        self.board_detect.sqr_size = 360/8
 
         # self.maxAngular = 18  # deg/sec
         # self.station = []  # 1-10
@@ -165,6 +174,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, True))
 
         # Function Page Detect
+        self.ui.chessBoard_detect_layout.addWidget(self.board_detect)
         self.ui.camera1_detect_layout.addWidget(self.cam1_detect_label)
         self.ui.camera2_detect_layout.addWidget(self.cam2_detect_label)
         self.ui.btn_open_camera_set.clicked.connect(
@@ -179,6 +189,7 @@ class MainWindow(QMainWindow):
             lambda: self.setup_camera2(self.cam2_detect_label))
         self.ui.btn_close_camera_detect.clicked.connect(
             lambda: self.close_camera(4, self.cam2_detect_label))
+        self.ui.btn_capture_detect.clicked.connect(self.capture_camera)
 
         # Function Page Setup
         self.ui.duck_layout.addWidget(self.labelPic)
@@ -189,6 +200,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_send_xyz.clicked.connect(self.sendxyz)
         self.ui.btn_send_grip_open.clicked.connect(self.sendGripOpen)
         self.ui.btn_send_grip_close.clicked.connect(self.sendGripClose)
+        self.ui.btn_send_pick_place.clicked.connect(self.sendChess_Pick)
 
         self.ui.horizontalSlider_joint_1.valueChanged.connect(
             self.updateAngulaJoint_1_toText)
@@ -432,6 +444,17 @@ class MainWindow(QMainWindow):
     def sendGripClose(self):
         ISUS_UART.Grip_Chess(0)
 
+    def sendChess_Pick(self):
+        rowi = (self.ui.value_pick.text())[0]
+        print(rowi)
+        columni = int((self.ui.value_pick.text())[1])
+        print(columni)
+        rowf = (self.ui.value_place.text())[0]
+        print(rowf)
+        columnf = int((self.ui.value_place.text())[1])
+        print(columnf)
+        # ISUS_UART.Chess_Pick(self, rowi, columni, rowf, columnf, name)
+
     ## ==> END ##
 
     ########################################################################
@@ -472,7 +495,14 @@ class MainWindow(QMainWindow):
         """Initialize camera.
         """
         try:
-            self.capture1 = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+            # set new dimensionns to cam object (not cap)
+
+            self.capture1 = cv2.VideoCapture(2, cv2.CAP_DSHOW)
+            self.capture1.set(3, 1280)
+            self.capture1.set(4, 1024)
+            _, self.image_top = copy.deepcopy(
+                self.capture1.read())
+            self.image_top = np.array(self.image_top)
             self.capture1.set(cv2.CAP_PROP_FRAME_WIDTH,
                               self.video_size.width())
             self.capture1.set(cv2.CAP_PROP_FRAME_HEIGHT,
@@ -485,11 +515,17 @@ class MainWindow(QMainWindow):
         except:
             print(f"Cam 1 is invalid.")
 
-    def setup_camera2(self, label):
+    def setup_camera2(self, label):  # top หน้าจอ2
         """Initialize camera.
         """
         try:
-            self.capture2 = cv2.VideoCapture(3, cv2.CAP_DSHOW)
+            self.capture2 = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            # set new dimensionns to cam object (not cap)
+            self.capture2.set(3, 1280)
+            self.capture2.set(4, 1024)
+            _, self.image_side = copy.deepcopy(
+                self.capture2.read())
+            self.image_side = np.array(self.image_side)
             self.capture2.set(cv2.CAP_PROP_FRAME_WIDTH,
                               self.video_size.width())
             self.capture2.set(cv2.CAP_PROP_FRAME_HEIGHT,
@@ -519,6 +555,7 @@ class MainWindow(QMainWindow):
         _, frame = self.capture2.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.flip(frame, 1)
+        # self.image_side = frame
         image = QImage(frame, frame.shape[1], frame.shape[0],
                        frame.strides[0], QImage.Format_RGB888)
         label = label
@@ -537,6 +574,18 @@ class MainWindow(QMainWindow):
             self.timer2.stop()
         except:
             print(f"capture2 is invalid.")
+
+    def capture_camera(self):
+        # self.setup_camera1(self.cam1_detect_label)
+        # self.setup_camera2(self.cam2_detect_label)
+        # print("evaluate chess pieces")
+        # print(self.image_side)
+        # cv2.imwrite('image_side.jpg', self.image_side)
+        # cv2.imwrite('image_top.jpg', self.image_top)
+        # fen = main_detection.main_chess_piece(self.image_top, self.image_side)
+        fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
+        print(fen)
+        self.board_detect.set_fen(fen)
 
     ## ==> END ##
 
