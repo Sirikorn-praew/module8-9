@@ -61,6 +61,9 @@ class MainWindow(QMainWindow):
         self.board.sqr_size = 720/8
         self.info = Info(self)
 
+        self.board_process = ChessBoard(self)
+        self.board_process.sqr_size = 360/8
+
         self.board_detect = ChessBoard(self)
         self.board_detect.sqr_size = 360/8
 
@@ -140,6 +143,14 @@ class MainWindow(QMainWindow):
 
         # CAMERA LABLE
         self.no_sigal = QPixmap('./icons/No_signal_resize.jpg')
+        self.cam1_process_label = QLabel()
+        self.cam1_process_label.setFixedSize(self.video_size)
+        self.cam1_process_label.setPixmap(self.no_sigal)
+        self.cam1_process_label.setAlignment(Qt.AlignCenter)
+        self.cam2_process_label = QLabel()
+        self.cam2_process_label.setFixedSize(self.video_size)
+        self.cam2_process_label.setPixmap(self.no_sigal)
+        self.cam2_process_label.setAlignment(Qt.AlignCenter)
         self.cam1_detect_label = QLabel()
         self.cam1_detect_label.setFixedSize(self.video_size)
         self.cam1_detect_label.setPixmap(self.no_sigal)
@@ -153,8 +164,23 @@ class MainWindow(QMainWindow):
         self.cam_set_label.setPixmap(self.no_sigal)
         self.cam_set_label.setAlignment(Qt.AlignCenter)
 
-        self.ui.btn_start_process.clicked.connect(self.pageProcess)
-        # Function Page Process
+        self.ui.btn_page_process.clicked.connect(self.pageProcess)
+        # Function Page Process #Edit
+        self.ui.chessBoard_process_layout.addWidget(self.board_process)
+        self.ui.camera1_process_layout.addWidget(self.cam1_process_label)
+        self.ui.camera2_process_layout.addWidget(self.cam2_process_label)
+        self.ui.btn_open_camera_process.clicked.connect(
+            lambda: self.setup_camera1(self.cam1_process_label))
+        self.ui.btn_close_camera_process.clicked.connect(
+            lambda: self.close_camera(2, self.cam1_process_label))
+        self.ui.btn_open_camera_process.clicked.connect(
+            lambda: self.setup_camera2(self.cam2_process_label))
+        self.ui.btn_close_camera_process.clicked.connect(
+            lambda: self.close_camera(4, self.cam2_process_label))
+        self.ui.btn_capture_process.clicked.connect(
+            lambda: self.capture_camera(''))
+        # self.ui.btn_reset_process.clicked.connect(
+        #     self.board_detect.draw_squares)
 
         # Function Page Game
         self.ui.btn_new_game.clicked.connect(self.chooseSide)
@@ -187,7 +213,9 @@ class MainWindow(QMainWindow):
             lambda: self.setup_camera2(self.cam2_detect_label))
         self.ui.btn_close_camera_detect.clicked.connect(
             lambda: self.close_camera(4, self.cam2_detect_label))
-        self.ui.btn_capture_detect.clicked.connect(self.capture_camera)
+        self.ui.btn_capture_detect.clicked.connect(
+            lambda: self.capture_camera('detect'))
+        self.ui.btn_reset_detect.clicked.connect(self.resetBoardDetect)
 
         # Function Page Setup
         self.ui.duck_layout.addWidget(self.labelPic)
@@ -555,7 +583,7 @@ class MainWindow(QMainWindow):
         except:
             print(f"capture2 is invalid.")
 
-    def capture_camera(self):
+    def capture_camera(self, status):
         # self.setup_camera1(self.cam1_detect_label)
         # self.setup_camera2(self.cam2_detect_label)
         # print("evaluate chess pieces")
@@ -563,16 +591,22 @@ class MainWindow(QMainWindow):
         # cv2.imwrite('image_side.jpg', self.image_side)
         # cv2.imwrite('image_top.jpg', self.image_top)
         # fen = main_detection.main_chess_piece(self.image_top, self.image_side)
-        # fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
-        fen = None
+        fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
+        # fen = None
         if fen != None:
             self.ui.status_fen_detect.setText(fen)
             self.ui.status_detect.setText('Detected!')
         else:
             self.ui.status_fen_detect.setText('Value')
-            self.ui.status_detect.setText('sad')
-        print(fen)
+            self.ui.status_detect.setText('S A D')
+        if status == 'detect':
+            self.board_detect.set_fen(fen)
+
+    def resetBoardDetect(self):
+        fen = '8/8/8/8/8/8/8/8 w - - 0 1'
         self.board_detect.set_fen(fen)
+        self.ui.status_fen_detect.setText('Value')
+        self.ui.status_detect.setText('Value')
 
     ## ==> END ##
 
