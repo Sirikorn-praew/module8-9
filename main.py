@@ -21,11 +21,12 @@ import sys
 import platform
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime,
-                            QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent)
+                            QMetaObject, QObject, QPoint, QRect, QSize, QTimer, QUrl, Qt, QEvent)
 from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase,
-                           QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient)
+                           QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient, QImage)
 from PySide2.QtWidgets import *
 
+import cv2
 import serial
 import chess
 import random
@@ -48,6 +49,8 @@ class MainWindow(QMainWindow):
         self.saved_game = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.video_size = QSize(480, 270)
 
         self.board = ChessBoard(self)
         self.info = Info(self)
@@ -121,10 +124,25 @@ class MainWindow(QMainWindow):
         # DUCK ICON
         self.duck = QPixmap('./icons/Duck_You_clear.png')
 
-        self.labelPic = QtWidgets.QLabel(self)
-        self.labelPic.setGeometry(QtCore.QRect(0, 0, 120, 120))
+        self.labelPic = QLabel()
+        self.labelPic.setGeometry(QRect(0, 0, 120, 120))
         self.labelPic.setObjectName("labelPic")
         self.labelPic.setPixmap(self.duck)
+
+        # CAMERA LABLE
+        self.no_sigal = QPixmap('./icons/No_signal_resize.jpg')
+        self.cam1_detect_label = QLabel()
+        self.cam1_detect_label.setFixedSize(self.video_size)
+        self.cam1_detect_label.setPixmap(self.no_sigal)
+        self.cam1_detect_label.setAlignment(Qt.AlignCenter)
+        self.cam2_detect_label = QLabel()
+        self.cam2_detect_label.setFixedSize(self.video_size)
+        self.cam2_detect_label.setPixmap(self.no_sigal)
+        self.cam2_detect_label.setAlignment(Qt.AlignCenter)
+        self.cam_set_label = QLabel()
+        self.cam_set_label.setFixedSize(self.video_size)
+        self.cam_set_label.setPixmap(self.no_sigal)
+        self.cam_set_label.setAlignment(Qt.AlignCenter)
 
         # Function
         # self.ui.btn_pos_drive_3.clicked.connect(self.setMaximumAng)
@@ -146,8 +164,25 @@ class MainWindow(QMainWindow):
             lambda: self.newGame(random.choice(["w", "b"]), True))
         self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, True))
 
+        # Function Page Detect
+        self.ui.camera1_detect_layout.addWidget(self.cam1_detect_label)
+        self.ui.camera2_detect_layout.addWidget(self.cam2_detect_label)
+        self.ui.btn_open_camera_set.clicked.connect(
+            lambda: self.setup_camera1(self.cam_set_label))
+        self.ui.btn_close_camera_set.clicked.connect(
+            lambda: self.close_camera(2, self.cam_set_label))
+        self.ui.btn_open_camera_detect.clicked.connect(
+            lambda: self.setup_camera1(self.cam1_detect_label))
+        self.ui.btn_close_camera_detect.clicked.connect(
+            lambda: self.close_camera(2, self.cam1_detect_label))
+        self.ui.btn_open_camera_detect.clicked.connect(
+            lambda: self.setup_camera2(self.cam2_detect_label))
+        self.ui.btn_close_camera_detect.clicked.connect(
+            lambda: self.close_camera(4, self.cam2_detect_label))
+
         # Function Page Setup
         self.ui.duck_layout.addWidget(self.labelPic)
+        self.ui.camera_set_layout.addWidget(self.cam_set_label)
         self.ui.btn_send_startstop.clicked.connect(self.sendStartStop)
         self.ui.btn_send_home.clicked.connect(self.sendsetHome)
         self.ui.btn_send_joint.clicked.connect(self.sendJoint)
@@ -426,6 +461,82 @@ class MainWindow(QMainWindow):
     def backHomeGame(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_game)
         UIFunctions.labelPage(self, "Chess Game")
+
+    ## ==> END ##
+
+    ########################################################################
+    # START ==> CAMERA SETTING
+    ########################################################################
+
+    def setup_camera1(self, label):
+        """Initialize camera.
+        """
+        try:
+            self.capture1 = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+            self.capture1.set(cv2.CAP_PROP_FRAME_WIDTH,
+                              self.video_size.width())
+            self.capture1.set(cv2.CAP_PROP_FRAME_HEIGHT,
+                              self.video_size.height())
+
+            self.timer1 = QTimer()
+            self.timer1.timeout.connect(
+                lambda: self.display_video_stream1(label))
+            self.timer1.start(30)
+        except:
+            print(f"Cam 1 is invalid.")
+
+    def setup_camera2(self, label):
+        """Initialize camera.
+        """
+        try:
+            self.capture2 = cv2.VideoCapture(3, cv2.CAP_DSHOW)
+            self.capture2.set(cv2.CAP_PROP_FRAME_WIDTH,
+                              self.video_size.width())
+            self.capture2.set(cv2.CAP_PROP_FRAME_HEIGHT,
+                              self.video_size.height())
+
+            self.timer2 = QTimer()
+            self.timer2.timeout.connect(
+                lambda: self.display_video_stream2(label))
+            self.timer2.start(30)
+        except:
+            print(f"Cam 3 is invalid.")
+
+    def display_video_stream1(self, label):
+        """Read frame from camera and repaint QLabel widget.
+        """
+        _, frame = self.capture1.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.flip(frame, 1)
+        image = QImage(frame, frame.shape[1], frame.shape[0],
+                       frame.strides[0], QImage.Format_RGB888)
+        label = label
+        label.setPixmap(QPixmap.fromImage(image))
+
+    def display_video_stream2(self, label):
+        """Read frame from camera and repaint QLabel widget.
+        """
+        _, frame = self.capture2.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.flip(frame, 1)
+        image = QImage(frame, frame.shape[1], frame.shape[0],
+                       frame.strides[0], QImage.Format_RGB888)
+        label = label
+        label.setPixmap(QPixmap.fromImage(image))
+
+    def close_camera(self, idx, label):
+        try:
+            self.capture1.release()
+            label.setPixmap(self.no_sigal)
+            self.timer1.stop()
+        except:
+            print(f"capture1 is invalid.")
+        try:
+            self.capture2.release()
+            label.setPixmap(self.no_sigal)
+            self.timer2.stop()
+        except:
+            print(f"capture2 is invalid.")
 
     ## ==> END ##
 
