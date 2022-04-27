@@ -15,12 +15,14 @@ from pychess.gameState import GameState
 from pychess.chessAgent import ChessAgent
 # from pychess.ui_board import Ui_ChessBoard
 
-SQR_SIZE = 720/8
+# SQR_SIZE = 720/8
 
 
 class ChessBoard(QFrame):
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.sqr_size = 720/8
 
         self.parent = parent
 
@@ -44,15 +46,13 @@ class ChessBoard(QFrame):
 
         self.undone_stack = []
 
-        self.sqr_size = SQR_SIZE
-
-    # def resizeEvent(self, event):
-    #     if event.size().width() > event.size().height():
-    #         self.resize(event.size().height(), event.size().height())
-    #         self.sqr_size = int(event.size().height() / 8)
-    #     else:
-    #         self.resize(event.size().width(), event.size().width())
-    #         self.sqr_size = int(event.size().width() / 8)
+    def resizeEvent(self, event):
+        if event.size().width() > event.size().height():
+            self.resize(event.size().height(), event.size().height())
+            self.sqr_size = int(event.size().height() / 8)
+        else:
+            self.resize(event.size().width(), event.size().width())
+            self.sqr_size = int(event.size().width() / 8)
 
     def start_game(self):
         if self.agent_play or self.gamestate.colour() == self.user_is_white:
@@ -66,8 +66,12 @@ class ChessBoard(QFrame):
             for col, file in enumerate('abcdefgh'):
                 square = QWidget(self)
                 square.setObjectName(file + rank)
-                square.setSizePolicy(QSizePolicy.Expanding,
-                                     QSizePolicy.Expanding)
+                if self.sqr_size != 720/8:
+                    square.setSizePolicy(self.sqr_size,
+                                         self.sqr_size)
+                else:
+                    square.setSizePolicy(QSizePolicy.Expanding,
+                                         QSizePolicy.Expanding)
                 if row % 2 == col % 2:
                     square.setStyleSheet('background-color: #F4EAD1')  # F0DFB5
                 else:
@@ -124,7 +128,7 @@ class ChessBoard(QFrame):
         self.set_fen(setting_chess.starting_fen)
         self.refresh_from_state()
 
-        self.gamestate.undo_info.clear() 
+        self.gamestate.undo_info.clear()
         self.undone_stack.clear()
 
     def highlight(self, sq):
@@ -393,6 +397,7 @@ class PieceLabel(QLabel):
         self.board = parent
         self.is_white = False if self.piece >> 3 else True
         self.is_enabled = True
+        self.sqr_size = self.board.sqr_size
 
         self.src_pos = None
         self.mouse_pos = None
@@ -404,8 +409,9 @@ class PieceLabel(QLabel):
         # Store original piece image
         pixmap = QPixmap('./assets/pieces/{}{}.png'.format('w' if self.is_white else 'b',
                                                            setting_chess.piece_int_to_string[self.piece].lower()))
-        # pixmap = pixmap.scaled(
-        #     64, 64, QtCore.Qt.KeepAspectRatio, Qt.FastTransformation)
+        if self.sqr_size != 720/8:
+            pixmap = pixmap.scaled(
+                self.sqr_size, self.sqr_size, QtCore.Qt.KeepAspectRatio, Qt.FastTransformation)
         self.setPixmap(pixmap)
 
         # When label is scaled, also scale image inside the label

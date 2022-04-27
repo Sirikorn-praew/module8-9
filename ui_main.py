@@ -1428,98 +1428,81 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_play_chess)
         self.page_detect = QWidget()
         self.page_detect.setObjectName(u"page_detect")
-        self.gridLayout_4 = QGridLayout(self.page_detect)
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.camera1_detect_layout = QHBoxLayout()
-        self.camera1_detect_layout.setObjectName(u"camera1_detect_layout")
-
-        self.gridLayout_4.addLayout(self.camera1_detect_layout, 0, 0, 1, 1)
-
-        self.camera2_detect_layout = QVBoxLayout()
-        self.camera2_detect_layout.setObjectName(u"camera2_detect_layout")
-
-        self.gridLayout_4.addLayout(self.camera2_detect_layout, 0, 1, 1, 1)
-
-        self.frame_18 = QFrame(self.page_detect)
-        self.frame_18.setObjectName(u"frame_18")
-        self.frame_18.setFrameShape(QFrame.StyledPanel)
-        self.frame_18.setFrameShadow(QFrame.Raised)
-        self.btn_send_home_5 = QPushButton(self.frame_18)
-        self.btn_send_home_5.setObjectName(u"btn_send_home_5")
-        self.btn_send_home_5.setGeometry(QRect(90, 210, 160, 40))
-        sizePolicy5.setHeightForWidth(self.btn_send_home_5.sizePolicy().hasHeightForWidth())
-        self.btn_send_home_5.setSizePolicy(sizePolicy5)
-        self.btn_send_home_5.setMinimumSize(QSize(160, 40))
-        self.btn_send_home_5.setMaximumSize(QSize(300, 50))
-        self.btn_send_home_5.setFont(font10)
-        self.btn_send_home_5.setLayoutDirection(Qt.LeftToRight)
-        self.btn_send_home_5.setStyleSheet(u"QPushButton {\n"
-"	border: 2px solid rgb(199, 84, 80);\n"
-"	border-radius: 5px;	\n"
-"	background-color: rgb(199, 84, 80);\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(240, 84, 80);\n"
-"	border: 2px solid rgb(240, 84, 80);\n"
-"}\n"
-"QPushButton:pressed {	\n"
-"	background-color: rgb(35, 40, 49);\n"
-"	border: 2px solid rgb(43, 50, 61);\n"
-"}")
-        self.btn_open_camera_detect = QPushButton(self.frame_18)
-        self.btn_open_camera_detect.setObjectName(u"btn_open_camera_detect")
-        self.btn_open_camera_detect.setGeometry(QRect(90, 100, 160, 40))
-        sizePolicy5.setHeightForWidth(self.btn_open_camera_detect.sizePolicy().hasHeightForWidth())
-        self.btn_open_camera_detect.setSizePolicy(sizePolicy5)
-        self.btn_open_camera_detect.setMinimumSize(QSize(160, 40))
-        self.btn_open_camera_detect.setMaximumSize(QSize(300, 50))
-        self.btn_open_camera_detect.setFont(font10)
-        self.btn_open_camera_detect.setLayoutDirection(Qt.LeftToRight)
-        self.btn_open_camera_detect.setStyleSheet(u"QPushButton {\n"
-"	border: 2px solid rgb(199, 84, 80);\n"
-"	border-radius: 5px;	\n"
-"	background-color: rgb(199, 84, 80);\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(240, 84, 80);\n"
-"	border: 2px solid rgb(240, 84, 80);\n"
-"}\n"
-"QPushButton:pressed {	\n"
-"	background-color: rgb(35, 40, 49);\n"
-"	border: 2px solid rgb(43, 50, 61);\n"
-"}")
-        self.btn_close_camera_detect = QPushButton(self.frame_18)
-        self.btn_close_camera_detect.setObjectName(u"btn_close_camera_detect")
-        self.btn_close_camera_detect.setGeometry(QRect(290, 100, 160, 40))
-        sizePolicy5.setHeightForWidth(self.btn_close_camera_detect.sizePolicy().hasHeightForWidth())
-        self.btn_close_camera_detect.setSizePolicy(sizePolicy5)
-        self.btn_close_camera_detect.setMinimumSize(QSize(160, 40))
-        self.btn_close_camera_detect.setMaximumSize(QSize(300, 50))
-        self.btn_close_camera_detect.setFont(font10)
-        self.btn_close_camera_detect.setLayoutDirection(Qt.LeftToRight)
-        self.btn_close_camera_detect.setStyleSheet(u"QPushButton {\n"
-"	border: 2px solid rgb(52, 59, 72);\n"
-"	border-radius: 5px;	\n"
-"	background-color: rgb(52, 59, 72);\n"
-"}\n"
-"QPushButton:hover {\n"
-"	background-color: rgb(57, 65, 80);\n"
-"	border: 2px solid rgb(61, 70, 86);\n"
-"}\n"
-"QPushButton:pressed {	\n"
-"	background-color: rgb(35, 40, 49);\n"
-"	border: 2px solid rgb(43, 50, 61);\n"
-"}")
-
-        self.gridLayout_4.addWidget(self.frame_18, 1, 1, 1, 1)
-
+        self.horizontalLayout_15 = QHBoxLayout(self.page_detect)
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
         self.chessBoard_detect_frame = QFrame(self.page_detect)
         self.chessBoard_detect_frame.setObjectName(u"chessBoard_detect_frame")
         self.chessBoard_detect_frame.setFrameShape(QFrame.StyledPanel)
         self.chessBoard_detect_frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayoutWidget_4 = QWidget(self.chessBoard_detect_frame)
+        self.verticalLayoutWidget_4.setObjectName(u"verticalLayoutWidget_4")
+        self.verticalLayoutWidget_4.setGeometry(QRect(0, 0, 531, 351))
+        self.camera1_detect_layout = QVBoxLayout(self.verticalLayoutWidget_4)
+        self.camera1_detect_layout.setObjectName(u"camera1_detect_layout")
+        self.camera1_detect_layout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayoutWidget_6 = QWidget(self.chessBoard_detect_frame)
+        self.horizontalLayoutWidget_6.setObjectName(u"horizontalLayoutWidget_6")
+        self.horizontalLayoutWidget_6.setGeometry(QRect(80, 350, 391, 371))
+        self.chessBoard_detect_layout = QHBoxLayout(self.horizontalLayoutWidget_6)
+        self.chessBoard_detect_layout.setObjectName(u"chessBoard_detect_layout")
+        self.chessBoard_detect_layout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayoutWidget_7 = QWidget(self.chessBoard_detect_frame)
+        self.horizontalLayoutWidget_7.setObjectName(u"horizontalLayoutWidget_7")
+        self.horizontalLayoutWidget_7.setGeometry(QRect(80, 720, 391, 31))
+        self.horizontalLayout_18 = QHBoxLayout(self.horizontalLayoutWidget_7)
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.horizontalLayout_18.setContentsMargins(0, 0, 0, 0)
+        self.label_35 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_35.setObjectName(u"label_35")
+        self.label_35.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_35)
+
+        self.label_36 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_36.setObjectName(u"label_36")
+        self.label_36.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_36)
+
+        self.label_37 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_37.setObjectName(u"label_37")
+        self.label_37.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_37)
+
+        self.label_38 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_38.setObjectName(u"label_38")
+        self.label_38.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_38)
+
+        self.label_39 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_39.setObjectName(u"label_39")
+        self.label_39.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_39)
+
+        self.label_40 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_40.setObjectName(u"label_40")
+        self.label_40.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_40)
+
+        self.label_41 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_41.setObjectName(u"label_41")
+        self.label_41.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_41)
+
+        self.label_42 = QLabel(self.horizontalLayoutWidget_7)
+        self.label_42.setObjectName(u"label_42")
+        self.label_42.setFont(font5)
+
+        self.horizontalLayout_18.addWidget(self.label_42)
+
         self.verticalLayoutWidget_2 = QWidget(self.chessBoard_detect_frame)
         self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
-        self.verticalLayoutWidget_2.setGeometry(QRect(40, -20, 31, 391))
+        self.verticalLayoutWidget_2.setGeometry(QRect(50, 350, 31, 371))
         self.verticalLayout_16 = QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -1572,72 +1555,99 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_16.addWidget(self.label_34)
 
-        self.horizontalLayoutWidget_6 = QWidget(self.chessBoard_detect_frame)
-        self.horizontalLayoutWidget_6.setObjectName(u"horizontalLayoutWidget_6")
-        self.horizontalLayoutWidget_6.setGeometry(QRect(70, -20, 391, 391))
-        self.chessBoard_detect_layout = QHBoxLayout(self.horizontalLayoutWidget_6)
-        self.chessBoard_detect_layout.setObjectName(u"chessBoard_detect_layout")
-        self.chessBoard_detect_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayoutWidget_7 = QWidget(self.chessBoard_detect_frame)
-        self.horizontalLayoutWidget_7.setObjectName(u"horizontalLayoutWidget_7")
-        self.horizontalLayoutWidget_7.setGeometry(QRect(70, 370, 391, 21))
-        self.horizontalLayout_18 = QHBoxLayout(self.horizontalLayoutWidget_7)
-        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.horizontalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.label_35 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_35.setObjectName(u"label_35")
-        self.label_35.setFont(font5)
 
-        self.horizontalLayout_18.addWidget(self.label_35)
+        self.horizontalLayout_15.addWidget(self.chessBoard_detect_frame)
 
-        self.label_36 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_36.setObjectName(u"label_36")
-        self.label_36.setFont(font5)
+        self.camera_detect_layout = QVBoxLayout()
+        self.camera_detect_layout.setObjectName(u"camera_detect_layout")
+        self.verticalLayout_17 = QFrame(self.page_detect)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.verticalLayout_17.setFrameShape(QFrame.StyledPanel)
+        self.verticalLayout_17.setFrameShadow(QFrame.Raised)
+        self.verticalLayoutWidget_3 = QWidget(self.verticalLayout_17)
+        self.verticalLayoutWidget_3.setObjectName(u"verticalLayoutWidget_3")
+        self.verticalLayoutWidget_3.setGeometry(QRect(0, 0, 531, 351))
+        self.camera2_detect_layout = QVBoxLayout(self.verticalLayoutWidget_3)
+        self.camera2_detect_layout.setObjectName(u"camera2_detect_layout")
+        self.camera2_detect_layout.setContentsMargins(0, 0, 0, 0)
+        self.frame_21 = QFrame(self.verticalLayout_17)
+        self.frame_21.setObjectName(u"frame_21")
+        self.frame_21.setGeometry(QRect(20, 450, 501, 291))
+        self.frame_21.setFrameShape(QFrame.StyledPanel)
+        self.frame_21.setFrameShadow(QFrame.Raised)
+        self.btn_open_camera_detect = QPushButton(self.frame_21)
+        self.btn_open_camera_detect.setObjectName(u"btn_open_camera_detect")
+        self.btn_open_camera_detect.setGeometry(QRect(60, 60, 160, 40))
+        sizePolicy5.setHeightForWidth(self.btn_open_camera_detect.sizePolicy().hasHeightForWidth())
+        self.btn_open_camera_detect.setSizePolicy(sizePolicy5)
+        self.btn_open_camera_detect.setMinimumSize(QSize(160, 40))
+        self.btn_open_camera_detect.setMaximumSize(QSize(300, 50))
+        self.btn_open_camera_detect.setFont(font10)
+        self.btn_open_camera_detect.setLayoutDirection(Qt.LeftToRight)
+        self.btn_open_camera_detect.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(199, 84, 80);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(199, 84, 80);\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: rgb(240, 84, 80);\n"
+"	border: 2px solid rgb(240, 84, 80);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.btn_close_camera_detect = QPushButton(self.frame_21)
+        self.btn_close_camera_detect.setObjectName(u"btn_close_camera_detect")
+        self.btn_close_camera_detect.setGeometry(QRect(280, 60, 160, 40))
+        sizePolicy5.setHeightForWidth(self.btn_close_camera_detect.sizePolicy().hasHeightForWidth())
+        self.btn_close_camera_detect.setSizePolicy(sizePolicy5)
+        self.btn_close_camera_detect.setMinimumSize(QSize(160, 40))
+        self.btn_close_camera_detect.setMaximumSize(QSize(300, 50))
+        self.btn_close_camera_detect.setFont(font10)
+        self.btn_close_camera_detect.setLayoutDirection(Qt.LeftToRight)
+        self.btn_close_camera_detect.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.btn_capture_detect = QPushButton(self.frame_21)
+        self.btn_capture_detect.setObjectName(u"btn_capture_detect")
+        self.btn_capture_detect.setGeometry(QRect(60, 170, 160, 40))
+        sizePolicy5.setHeightForWidth(self.btn_capture_detect.sizePolicy().hasHeightForWidth())
+        self.btn_capture_detect.setSizePolicy(sizePolicy5)
+        self.btn_capture_detect.setMinimumSize(QSize(160, 40))
+        self.btn_capture_detect.setMaximumSize(QSize(300, 50))
+        self.btn_capture_detect.setFont(font10)
+        self.btn_capture_detect.setLayoutDirection(Qt.LeftToRight)
+        self.btn_capture_detect.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(199, 84, 80);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(199, 84, 80);\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: rgb(240, 84, 80);\n"
+"	border: 2px solid rgb(240, 84, 80);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
 
-        self.horizontalLayout_18.addWidget(self.label_36)
-
-        self.label_37 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_37.setObjectName(u"label_37")
-        self.label_37.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_37)
-
-        self.label_38 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_38.setObjectName(u"label_38")
-        self.label_38.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_38)
-
-        self.label_39 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_39.setObjectName(u"label_39")
-        self.label_39.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_39)
-
-        self.label_40 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_40.setObjectName(u"label_40")
-        self.label_40.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_40)
-
-        self.label_41 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_41.setObjectName(u"label_41")
-        self.label_41.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_41)
-
-        self.label_42 = QLabel(self.horizontalLayoutWidget_7)
-        self.label_42.setObjectName(u"label_42")
-        self.label_42.setFont(font5)
-
-        self.horizontalLayout_18.addWidget(self.label_42)
+        self.camera_detect_layout.addWidget(self.verticalLayout_17)
 
 
-        self.gridLayout_4.addWidget(self.chessBoard_detect_frame, 1, 0, 1, 1)
+        self.horizontalLayout_15.addLayout(self.camera_detect_layout)
 
         self.stackedWidget.addWidget(self.page_detect)
-        self.chessBoard_detect_frame.raise_()
-        self.frame_18.raise_()
         self.page_run = QWidget()
         self.page_run.setObjectName(u"page_run")
         self.horizontalLayout_14 = QHBoxLayout(self.page_run)
@@ -2794,7 +2804,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 323, 222))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 222, 222))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -3233,17 +3243,6 @@ class Ui_MainWindow(object):
         self.label_17.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">g</span></p></body></html>", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">h</span></p></body></html>", None))
         self.btn_out_game.setText(QCoreApplication.translate("MainWindow", u"back", None))
-        self.btn_send_home_5.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
-        self.btn_open_camera_detect.setText(QCoreApplication.translate("MainWindow", u"Open Camera", None))
-        self.btn_close_camera_detect.setText(QCoreApplication.translate("MainWindow", u"Close Camera", None))
-        self.label_23.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">8</p></body></html>", None))
-        self.label_24.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">7</span></p></body></html>", None))
-        self.label_25.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">6</span></p></body></html>", None))
-        self.label_27.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">5</span></p></body></html>", None))
-        self.label_28.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">4</span></p></body></html>", None))
-        self.label_30.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">3</span></p></body></html>", None))
-        self.label_33.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">2</span></p></body></html>", None))
-        self.label_34.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">1</span></p></body></html>", None))
         self.label_35.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">a</span></p></body></html>", None))
         self.label_36.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">b</span></p></body></html>", None))
         self.label_37.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">c</span></p></body></html>", None))
@@ -3252,6 +3251,17 @@ class Ui_MainWindow(object):
         self.label_40.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">f</span></p></body></html>", None))
         self.label_41.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">g</span></p></body></html>", None))
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">h</span></p></body></html>", None))
+        self.label_23.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">8</span></p></body></html>", None))
+        self.label_24.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">7</span></p></body></html>", None))
+        self.label_25.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">6</span></p></body></html>", None))
+        self.label_27.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">5</span></p></body></html>", None))
+        self.label_28.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">4</span></p></body></html>", None))
+        self.label_30.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">3</span></p></body></html>", None))
+        self.label_33.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">2</span></p></body></html>", None))
+        self.label_34.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">1</span></p></body></html>", None))
+        self.btn_open_camera_detect.setText(QCoreApplication.translate("MainWindow", u"Open Camera", None))
+        self.btn_close_camera_detect.setText(QCoreApplication.translate("MainWindow", u"Close Camera", None))
+        self.btn_capture_detect.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
         self.labelBoxBlenderInstalation_3.setText(QCoreApplication.translate("MainWindow", u"SETUP", None))
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"Joint 1", None))
         self.btn_send_grip_close.setText(QCoreApplication.translate("MainWindow", u"Gripper Close", None))
