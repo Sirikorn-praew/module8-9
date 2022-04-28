@@ -55,6 +55,13 @@ class ChessBoard(QFrame):
             self.sqr_size = int(event.size().width() / 8)
 
     def start_game(self):
+        if self.gamestate.colour() == self.user_is_white:
+            self.disable_pieces()
+            self.search_thread.start()
+        else:
+            self.enable_pieces()
+
+    def start_game_process(self):
         if self.agent_play or self.gamestate.colour() == self.user_is_white:
             self.disable_pieces()
             self.search_thread.start()

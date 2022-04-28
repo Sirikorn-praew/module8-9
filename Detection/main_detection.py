@@ -24,20 +24,19 @@ class MediaPipe_check_Hand:
         # loading trained model
         print('start mp')
 
-    def crop_square(self, img, size, interpolation=cv2.INTER_AREA):
-        h, w = self.img.shape[:2]
-        min_size = np.amin([h, w])
-
-        # Centralize and crop
-        self.crop_img = img[int(h/2-min_size/2):int(h/2+min_size/2),
-                            int(w/2-min_size/2):int(w/2+min_size/2)]
-        self.resized = cv2.resize(
-            crop_img, (self.size, self.size), interpolation=interpolation)
-
     def check_hand(self, image):
 
         # self.ret, self.frame = self.openCam.read()
-        self.frame = crop_square(image, image.shape[0])
+        self.frame = image.copy()
+        h, w = self.frame.shape[:2]
+        min_size = np.amin([h, w])
+
+        # Centralize and crop
+        self.crop_img = self.frame[int(h/2-min_size/2):int(h/2+min_size/2),
+                                   int(w/2-min_size/2):int(w/2+min_size/2)]
+        self.resized = cv2.resize(
+            self.crop_img, (self.frame.shape[0], self.frame.shape[0]))
+
         with mp_hands.Hands(
                 min_detection_confidence=0.7,  # 0.7
                 min_tracking_confidence=0.5) as hands:

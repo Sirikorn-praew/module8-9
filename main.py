@@ -42,7 +42,7 @@ from pychess.board import ChessBoard
 from pychess.info import Info
 
 # DETECTION
-from Detection import main_detection
+# from Detection import main_detection
 
 # COMUNICATION
 from Comunication import Serial_Comunication_ISUS
@@ -164,7 +164,11 @@ class MainWindow(QMainWindow):
         self.cam_set_label.setPixmap(self.no_sigal)
         self.cam_set_label.setAlignment(Qt.AlignCenter)
 
-        self.ui.btn_page_process.clicked.connect(self.pageProcess)
+        self.ui.btn_page_process.clicked.connect(self.pageSelectProcess)
+        self.ui.btn_play_white_process.clicked.connect(
+            lambda: self.newGame("w", False))
+        self.ui.btn_play_white_process.clicked.connect(
+            lambda: self.newGame("b", False))
         # Function Page Process #Edit
         self.ui.chessBoard_process_layout.addWidget(self.board_process)
         self.ui.camera1_process_layout.addWidget(self.cam1_process_label)
@@ -195,7 +199,7 @@ class MainWindow(QMainWindow):
             lambda: self.newGame("b", False))
         self.ui.btn_random.clicked.connect(
             lambda: self.newGame(random.choice(["w", "b"]), True))
-        self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, True))
+        # self.ui.btn_computer.clicked.connect(lambda: self.newGame(None, True))
 
         # Function Page Detect
         self.ui.chessBoard_detect_layout.addWidget(self.board_detect)
@@ -365,9 +369,9 @@ class MainWindow(QMainWindow):
     # START ==> PROCESS FUNCTION
     ########################################################################
 
-    def pageProcess(self):
-        self.ui.stackedWidget.setCurrentWidget(self.ui.page_all_process)
-        UIFunctions.labelPage(self, "On Process")
+    def pageSelectProcess(self):
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_select_process)
+        UIFunctions.labelPage(self, "Select Side")
 
     ## ==> END ##
 
@@ -472,6 +476,14 @@ class MainWindow(QMainWindow):
     def chooseSide(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_newgame_select)
         UIFunctions.labelPage(self, "Choose Side")
+
+    def newProcessGame(self, colour, agent_play):
+        self.board.set_fen(setting_chess.starting_fen)
+        self.board.agent_play = agent_play
+        self.board.user_is_white = True if colour == 'w' else False
+        self.board.start_game()
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_play_chess)
+        UIFunctions.labelPage(self, "Play Game")
 
     def newGame(self, colour, agent_play):
         self.info.move_frame.clear_moves()
