@@ -82,7 +82,7 @@ class EfficientNetModel:
 
 
 modelE4 = EfficientNetModel(
-    '.\Detection\checkpoint_hyper', (380, 380))
+    '.\Detection\checkpoint', (380, 380))
 get_m = variable.get_matrix_variable
 # print(model.summary)
 # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
