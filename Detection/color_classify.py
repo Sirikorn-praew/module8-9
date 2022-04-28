@@ -21,8 +21,8 @@ def kmeans_test(x):
 
     labels = kmeans.labels_
 
-    print(centroids)
-    print(labels)
+    # print(centroids)
+    # print(labels)
     return labels
 # kmeans_test(x)
 
@@ -45,18 +45,18 @@ def clustering_2group(points):
         thresh = (min(clusters[0]) + max(clusters[1]))/2
     else:
         thresh = (min(clusters[1]) + max(clusters[0]))/2
-    print('threshold', thresh, clusters)
+    # print('threshold', thresh, clusters)
     return thresh
 
 
 def avg(img):
-    print('go')
+    # print('go')
     # img = cv2.imread(
     #     'D:\Year4_2\module89\AI detection\Detect_chessBoard\chessApp\chess_piece/top_view_70.jpg')
     img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # cv2.imshow('img', img)
     hue = img[:, :, 0]
-    print(hue)
+    # print(hue)
     avg_hue = np.mean(hue)
     # print('H average=', avg_hue)
     # cv2.waitKey(0)
@@ -80,7 +80,7 @@ def kmeans_classify(list_of_image):
         cropped_image = contrast[h1:h2, w1:w2]
         # print(image)
         list_of_avg_hue.append(int(avg(cropped_image)))
-    print('kmean')
+    # print('kmean')
     return kmeans_test(list_of_avg_hue)
 
 
@@ -102,10 +102,10 @@ def find_threshold_color_chess_piece(list_of_image):
         list_of_avg_hue.append(int(avg(cropped_image)))
     print('kmean')
     kmeans_test(list_of_avg_hue)
-    print('list_of_avg_hue', clustering_2group(
-        sorted(list_of_avg_hue)), list_of_avg_hue)
-    for i in list_of_avg_hue:
-        print(i)
+    # print('list_of_avg_hue', clustering_2group(
+    #     sorted(list_of_avg_hue)), list_of_avg_hue)
+    # for i in list_of_avg_hue:
+    #     print(i)
     return clustering_2group(sorted(list_of_avg_hue)), list_of_avg_hue
 
 

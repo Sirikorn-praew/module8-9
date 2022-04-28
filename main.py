@@ -17,6 +17,7 @@
 ##
 ################################################################################
 
+import re
 import sys
 import platform
 from PySide2 import QtCore, QtGui, QtWidgets
@@ -166,9 +167,9 @@ class MainWindow(QMainWindow):
 
         self.ui.btn_page_process.clicked.connect(self.pageSelectProcess)
         self.ui.btn_play_white_process.clicked.connect(
-            lambda: self.newGame("w", False))
-        self.ui.btn_play_white_process.clicked.connect(
-            lambda: self.newGame("b", False))
+            lambda: self.newProcessGame("w", True))
+        self.ui.btn_play_black_process.clicked.connect(
+            lambda: self.newProcessGame("b", True))
         # Function Page Process #Edit
         self.ui.chessBoard_process_layout.addWidget(self.board_process)
         self.ui.camera1_process_layout.addWidget(self.cam1_process_label)
@@ -182,7 +183,9 @@ class MainWindow(QMainWindow):
         self.ui.btn_close_camera_process.clicked.connect(
             lambda: self.close_camera(4, self.cam2_process_label))
         self.ui.btn_capture_process.clicked.connect(
-            lambda: self.capture_camera(''))
+            lambda: self.capture_camera('process'))
+        self.ui.btn_start_process.clicked.connect(self.startProcess)
+        self.ui.status_turn_process.setText(self.showTurn())
         # self.ui.btn_reset_process.clicked.connect(
         #     self.board_detect.draw_squares)
 
@@ -368,10 +371,43 @@ class MainWindow(QMainWindow):
     ########################################################################
     # START ==> PROCESS FUNCTION
     ########################################################################
+    def showTurn(self):
+        print(self.board_process.gamestate.boardPlay.fen)
+        try:
+            return "White" if self.board_process.gamestate.boardPlay.turn == chess.WHITE else "Black"
+        except:
+            return "---"
+
+    def get_uci(board1, board2, who_moved):
+        str_board = str(board1).split("\n")
+        str_board2 = str(board2).split("\n")
+        move = ""
+        flip = False
+        if who_moved == chess.WHITE:
+            for i in range(8)[::-1]:
+                for x in range(15)[::-1]:
+                    if str_board[i][x] != str_board2[i][x]:
+                        if str_board[i][x] == "." and move == "":
+                            flip = True
+                        move += str(nums.get(round(x/2)+1))+str(9-(i+1))
+        else:
+            for i in range(8):
+                for x in range(15):
+                    if str_board[i][x] != str_board2[i][x]:
+                        if str_board[i][x] == "." and move == "":
+                            flip = True
+                        move += str(nums.get(round(x/2)+1))+str(9-(i+1))
+        if flip:
+            move = move[2]+move[3]+move[0]+move[1]
+        return move
 
     def pageSelectProcess(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_select_process)
         UIFunctions.labelPage(self, "Select Side")
+
+    def startProcess(self):
+        self.capture_camera('detect_process')
+        self.board_process.start_game_process()
 
     ## ==> END ##
 
@@ -478,12 +514,12 @@ class MainWindow(QMainWindow):
         UIFunctions.labelPage(self, "Choose Side")
 
     def newProcessGame(self, colour, agent_play):
-        self.board.set_fen(setting_chess.starting_fen)
-        self.board.agent_play = agent_play
-        self.board.user_is_white = True if colour == 'w' else False
-        self.board.start_game()
-        self.ui.stackedWidget.setCurrentWidget(self.ui.page_play_chess)
-        UIFunctions.labelPage(self, "Play Game")
+        # self.board_process.set_fen(setting_chess.starting_fen)
+        self.board_process.agent_play = agent_play
+        self.board_process.user_is_white = True if colour == 'w' else False
+        # self.board_process.start_game()
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_all_process)
+        UIFunctions.labelPage(self, "On Process")
 
     def newGame(self, colour, agent_play):
         self.info.move_frame.clear_moves()
@@ -603,7 +639,9 @@ class MainWindow(QMainWindow):
         # cv2.imwrite('image_side.jpg', self.image_side)
         # cv2.imwrite('image_top.jpg', self.image_top)
         # fen = main_detection.main_chess_piece(self.image_top, self.image_side)
-        fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
+        fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+        # fen = '8/6P1/7k/4B3/4B2K/8/8/8 w - - 0 1'
+        # fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
         # fen = None
         if fen != None:
             self.ui.status_fen_detect.setText(fen)
@@ -613,9 +651,17 @@ class MainWindow(QMainWindow):
             self.ui.status_detect.setText('S A D')
         if status == 'detect':
             self.board_detect.set_fen(fen)
+        elif status == 'detect_process':
+            self.board_process.set_fen(fen)
+        elif status == 'process':
+            board_after = chess.Board(fen)
+            move_uci = self.get_uci(
+                self.board_process.gamestate.boardPlay, board_after, self.board_process.gamestate.boardPlay.turn)
+            move = chess.Move.from_uci(move_uci)
+            self.board_process.player_move(move)
 
     def resetBoardDetect(self):
-        fen = '8/8/8/8/8/8/8/8 w - - 0 1'
+        fen = '8/8/8/8/8/8/8/8'  # w - - 0 1
         self.board_detect.set_fen(fen)
         self.ui.status_fen_detect.setText('Value')
         self.ui.status_detect.setText('Value')

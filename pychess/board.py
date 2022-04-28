@@ -10,10 +10,9 @@ from PySide2.QtWidgets import *
 
 import chess
 import setting_chess
-# from position import Position
 from pychess.gameState import GameState
 from pychess.chessAgent import ChessAgent
-# from pychess.ui_board import Ui_ChessBoard
+# from Detection import main_detection
 
 # SQR_SIZE = 720/8
 
@@ -55,18 +54,22 @@ class ChessBoard(QFrame):
             self.sqr_size = int(event.size().width() / 8)
 
     def start_game(self):
-        if self.gamestate.colour() == self.user_is_white:
+        if self.agent_play or self.gamestate.colour() == self.user_is_white:
             self.disable_pieces()
             self.search_thread.start()
         else:
             self.enable_pieces()
 
     def start_game_process(self):
-        if self.agent_play or self.gamestate.colour() == self.user_is_white:
+        print("in process")
+        print(self.gamestate.boardPlay.fen)
+        print(self.gamestate.colour(), self.user_is_white)
+        if not(self.gamestate.colour()) == self.user_is_white:
             self.disable_pieces()
+            print("before search")
             self.search_thread.start()
         else:
-            self.enable_pieces()
+            self.disable_pieces()
 
     def draw_squares(self):
         for row, rank in enumerate('87654321'):
@@ -273,7 +276,8 @@ class ChessBoard(QFrame):
                 self.saved = False
 
             if self.agent_play:
-                self.search_thread.start()
+                self.disable_pieces()
+                # self.search_thread.start()
             else:
                 self.enable_pieces()
 

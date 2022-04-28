@@ -82,7 +82,7 @@ class EfficientNetModel:
 
 
 modelE4 = EfficientNetModel(
-    '.\Detection\checkpoint', (380, 380))
+    '.\Detection\checkpoint_hyper', (380, 380))
 get_m = variable.get_matrix_variable
 # print(model.summary)
 # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
@@ -430,6 +430,8 @@ def load_all_images(folder):
         if img is not None:
             images.append(img)
     return images
+
+
 def checkList(list):
     first = list[0]
     for elem in list:
@@ -438,8 +440,9 @@ def checkList(list):
             break
     return True
 
+
 def convert_to_fen(list_64str):
-    if checkList(list_64str) == True and list_64str[0]== '-' :
+    if checkList(list_64str) == True and list_64str[0] == '-':
         return '8/8/8/8/8/8/8/8'
 
     # print('convert_to_fen')
@@ -450,15 +453,15 @@ def convert_to_fen(list_64str):
         e = 0
         for j in range(8):
             # print(count)
-            if list_64str[count] !=  '-':
+            if list_64str[count] != '-':
 
                 fen += list_64str[count]
-            elif list_64str[count] ==  '-' and count+1 >= 64:
+            elif list_64str[count] == '-' and count+1 >= 64:
                 e += 1
                 break
             else:
                 e += 1
-                if list_64str[count+1] !=  '-':
+                if list_64str[count+1] != '-':
                     fen += str(e)
                     e = 0
             count += 1
@@ -557,8 +560,8 @@ def main_chess_piece(frame_side, frame_top):
 
         for index_normal in range(len(index_not_empty)):
             if list_of_color_classified[index_normal] == black:
-                print(pred[index_not_empty[index_normal]],
-                      type(pred[index_not_empty[index_normal]]))
+                # print(pred[index_not_empty[index_normal]],
+                #       type(pred[index_not_empty[index_normal]]))
                 pred[index_not_empty[index_normal]
                      ] = pred[index_not_empty[index_normal]].upper()
         print('have color', pred, len(pred))
