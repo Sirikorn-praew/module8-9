@@ -25,17 +25,11 @@ class MediaPipe_check_Hand:
         print('start mp')
 
     def check_hand(self, image):
-
+        leng = 200
         # self.ret, self.frame = self.openCam.read()
-        self.frame = image.copy()
-        h, w = self.frame.shape[:2]
-        min_size = np.amin([h, w])
-
-        # Centralize and crop
-        self.crop_img = self.frame[int(h/2-min_size/2):int(h/2+min_size/2),
-                                   int(w/2-min_size/2):int(w/2+min_size/2)]
-        self.resized = cv2.resize(
-            self.crop_img, (self.frame.shape[0], self.frame.shape[0]))
+        self.frame = image[0:image.shape[0], leng:image.shape[1]-leng]
+        # self.ret, self.frame = self.openCam.read()
+        # self.frame = image.copy()
 
         with mp_hands.Hands(
                 min_detection_confidence=0.7,  # 0.7
@@ -473,7 +467,7 @@ def main_chess_piece(frame_side, frame_top):
     top_data = get_m()
     side_data = get_m()
     print('MediaPipe')
-    # print('test1', cap_top.check_hand(frame_top))
+    print('test1', cap_top.check_hand(frame_top))
     # print('test2', cap_side.check_hand(frame_side))
     if cap_top.check_hand(frame_top) == 'Hand' or cap_top.check_hand(frame_top) == None:
         return None
