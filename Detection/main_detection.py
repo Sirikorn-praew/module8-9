@@ -430,9 +430,18 @@ def load_all_images(folder):
         if img is not None:
             images.append(img)
     return images
-
+def checkList(list):
+    first = list[0]
+    for elem in list:
+        if elem != first:
+            return False
+            break
+    return True
 
 def convert_to_fen(list_64str):
+    if checkList(list_64str) == True and list_64str[0]== '-' :
+        return '8/8/8/8/8/8/8/8'
+
     # print('convert_to_fen')
     count = 0
     e = 0
@@ -441,15 +450,15 @@ def convert_to_fen(list_64str):
         e = 0
         for j in range(8):
             # print(count)
-            if list_64str[count] != 'e':
+            if list_64str[count] !=  '-':
 
                 fen += list_64str[count]
-            elif list_64str[count] == 'e' and count+1 >= 64:
+            elif list_64str[count] ==  '-' and count+1 >= 64:
                 e += 1
                 break
             else:
                 e += 1
-                if list_64str[count+1] != 'e':
+                if list_64str[count+1] !=  '-':
                     fen += str(e)
                     e = 0
             count += 1
@@ -519,13 +528,13 @@ def main_chess_piece(frame_side, frame_top):
             ans.append(modelE4.make_prediction(img))
             pred = tf.concat(ans, axis=0)
         print('predict', pred)
-        mappings = {0: 'b', 1: 'e', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
+        mappings = {0: 'b', 1: '-', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
         pred = np.array(pred)
         pred = [mappings[i] for i in pred]
         print('to str', pred)
         index_not_empty = []
         for index in range(len(pred)):
-            if pred[index] != 'e':
+            if pred[index] != '-':
                 index_not_empty.append(index)
         print('index_not_empty', len(index_not_empty), index_not_empty)
 
