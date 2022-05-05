@@ -472,106 +472,113 @@ def convert_to_fen(list_64str):
     print(fen)
     return fen
 
+def crop_and_predict():
+    # crop
+    print('crop')
+    list_image_crop_top = []
+    list_image_crop_side = []
+    for group in range(len(top_data.new_matrix_to_crop)):
+        crop_top = crop_perspective_for_dataset(
+            top_data.new_matrix_to_crop[group], top_data.clear_image.copy())
+        list_image_crop_top.append(crop_top)
+        crop_side = crop_for_dataset_piece(
+            side_data.new_matrix_to_crop[group], side_data.clear_image.copy(), 60)
+        list_image_crop_side.append(crop_side)
+
+    print('predict')
+    ans = []
+    for img in list_image_crop_side:
+        ans.append(modelE4.make_prediction(img))
+        pred = tf.concat(ans, axis=0)
+    mappings = {0: 'b', 1: '-', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
+    pred = np.array(pred)
+    pred = [mappings[i] for i in pred]
+    print('to str', pred)
+    index_not_empty = []
+    for index in range(len(pred)):
+        if pred[index] != '-':
+            index_not_empty.append(index)
+    print('index_not_empty', len(index_not_empty), index_not_empty)
+
+    # classify_color
+    print('evaluate color')
+    list_of_images_to_clssify = []
+    for index in index_not_empty:
+        list_of_images_to_clssify.append(list_image_crop_top[index])
+    list_of_color_classified = color_classify.kmeans_classify(
+        list_of_images_to_clssify)
+
+    black = 1
+    for index_normal in range(len(index_not_empty)):
+        if list_of_color_classified[index_normal] == black:
+            pred[index_not_empty[index_normal]
+                 ] = pred[index_not_empty[index_normal]].upper()
+    print('have color', pred, len(pred))
+
+    fen = convert_to_fen(pred)
+
+    return fen
+
+
+def save_plot_point_image():
+    image_point = df.color_points(
+        top_data.clear_image.copy(), top_data.matrix.copy())
+    cv2.imwrite('top_data.jpg', image_point)
+
+    image_point = df.color_points(
+        side_data.clear_image.copy(), side_data.matrix.copy())
+    cv2.imwrite('side_data.jpg', image_point)
+
+    image_point = df.color_points(
+        top_data.clear_image.copy(), top_data.new_matrix.copy())
+    cv2.imwrite('top_data2.jpg', image_point)
+
+    image_point = df.color_points(
+        side_data.clear_image.copy(), side_data.new_matrix.copy())
+    cv2.imwrite('side_data2.jpg', image_point)
+
 
 def main_chess_piece(frame_side, frame_top):
     # cv2.imshow('top', frame_top)
     # cv2.imshow('side', frame_side)
     top_data = get_m()
     side_data = get_m()
+
     print('MediaPipe')
-    print('test1', cap_top.check_hand(frame_top))
-    # print('test2', cap_side.check_hand(frame_side))
-    if cap_top.check_hand(frame_top) == 'Hand' or cap_top.check_hand(frame_top) == None:
+    # print('Detect', cap_top.check_hand(frame_top))
+    check_hand_mediaPipe = cap_top.check_hand(frame_top)
+    print('detect', check_hand_mediaPipe)
+    if check_hand_mediaPipe == 'Hand' or check_hand_mediaPipe == None:
         return None
+
     try:
         top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
             frame_top)
         side_data.clear_image, side_data.matrix, side_data.new_matrix, side_data.new_matrix_to_crop = finding_new_matrix(
             frame_side)
 
-        image_point = df.color_points(
-            top_data.clear_image.copy(), top_data.matrix.copy())
-        cv2.imwrite('top_data.jpg', image_point)
+        save_plot_point_image()
+        return crop_and_predict()
 
-        image_point = df.color_points(
-            side_data.clear_image.copy(), side_data.matrix.copy())
-        cv2.imwrite('side_data.jpg', image_point)
-
-        image_point = df.color_points(
-            top_data.clear_image.copy(), top_data.new_matrix.copy())
-        cv2.imwrite('top_data2.jpg', image_point)
-
-        image_point = df.color_points(
-            side_data.clear_image.copy(), side_data.new_matrix.copy())
-        cv2.imwrite('side_data2.jpg', image_point)
-
-        # group and crop
-        print('crop')
-        list_image_crop_top = []
-        list_image_crop_side = []
-        for group in range(len(top_data.new_matrix_to_crop)):
-            crop_top = crop_perspective_for_dataset(
-                top_data.new_matrix_to_crop[group], top_data.clear_image.copy())
-            list_image_crop_top.append(crop_top)
-            # cv2.imwrite(
-            #     "D:\Bachelor\Y4/bhir_vision\Demo/top_crop" +
-            #     str(group) + ".jpg",
-            #     crop_top)
-            crop_side = crop_for_dataset_piece(
-                side_data.new_matrix_to_crop[group], side_data.clear_image.copy(), 60)
-            # cv2.imwrite(
-            #     "D:\Bachelor\Y4/bhir_vision\Demo\side_crop/" +
-            #     str(group) + ".jpg",
-            #     crop_side)
-            list_image_crop_side.append(crop_side)
-        print('predict')
-        # file_crop_side='D:\Year4_2\module89\AI detection\Demo\side_crop/'
-        ans = []
-        for img in list_image_crop_side:
-            ans.append(modelE4.make_prediction(img))
-            pred = tf.concat(ans, axis=0)
-        print('predict', pred)
-        mappings = {0: 'b', 1: '-', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
-        pred = np.array(pred)
-        pred = [mappings[i] for i in pred]
-        print('to str', pred)
-        index_not_empty = []
-        for index in range(len(pred)):
-            if pred[index] != '-':
-                index_not_empty.append(index)
-        print('index_not_empty', len(index_not_empty), index_not_empty)
-
-        # classify_color
-        print('evaluate color')
-        list_of_images_to_clssify = []
-        for index in index_not_empty:
-            # print(index)
-            list_of_images_to_clssify.append(list_image_crop_top[index])
-        list_of_color_classified = color_classify.kmeans_classify(
-            list_of_images_to_clssify)
-        # # print('list_of_images_to_clssify', len(list_of_images_to_clssify))
-        # thresh_top, list_of_avg_hue = color_classify.find_threshold_color_chess_piece(
-        #     list_of_images_to_clssify)
-        # # print('thresh', thresh_top, 'list_of_avg_hue', list_of_avg_hue)
-        # list_of_color_classified = color_classify.clssify_color_by_threshold(
-        #     thresh_top, list_of_avg_hue)
-        # # print(list_of_color_classified)
-        black = 1
-
-        for index_normal in range(len(index_not_empty)):
-            if list_of_color_classified[index_normal] == black:
-                # print(pred[index_not_empty[index_normal]],
-                #       type(pred[index_not_empty[index_normal]]))
-                pred[index_not_empty[index_normal]
-                     ] = pred[index_not_empty[index_normal]].upper()
-        print('have color', pred, len(pred))
-        fen = convert_to_fen(pred)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-        return fen
     except:
         print('sad')
         return None
+
+
+def main_chess_piece_old_point(frame_side, frame_top):
+    if cap_top.check_hand(frame_top) == 'Hand' or cap_top.check_hand(frame_top) == None:
+        return None
+    try:
+        top_data.clear_image = copy.deepcopy(frame_top)
+        side_data.clear_image = copy.deepcopy(frame_side)
+
+        save_plot_point_image()
+        return crop_and_predict()
+        
+    except:
+        print('sad too')
+        return None
+
 
 
 # if __name__ == "__main__":
