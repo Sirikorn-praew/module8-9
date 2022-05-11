@@ -59,6 +59,7 @@ FIELD_ZERO = 0x19
 PICK = 1
 DROP = 2
 HOME = 3
+PICK2 = 4
 
 
 class Uart_ISUS:
@@ -236,15 +237,21 @@ class Uart_ISUS:
     #     self.sendIPacket(14)
 
     def Chess_Pick(self, rowi, columni, rowf, columnf, name):
-        self.Field_Move(rowi, columni, rowf, columnf, PICK, name)
+        self.Field_Move(rowi, columni, rowf, columnf, "A",
+                        0, "A", 0, PICK, name, "KING")
 
-    def Chess_Drop(self, rowi, columni, name):
-        self.Field_Move(rowi, columni, "A", 0, DROP, name)
+    def Chess_Pick2(self, rowi, columni, rowf, columnf, rowi2, columni2, rowf2, columnf2, name, name2):
+        self.Field_Move(rowi, columni, rowf, columnf, rowi2,
+                        columni2, rowf2, columnf2, PICK2, name, name2)
+
+    def Chess_Drop(self, rowi, columni, rowf, columnf, rowi2, columni2, name, name2):  # num 2 drop
+        self.Field_Move(rowi, columni, rowf, columnf, rowi2,
+                        columni2, "A", 0, DROP, name, name2)
 
     def Chess_HOME(self):
-        self.Field_Move("A", 0, "A", 0, HOME, 1)
+        self.Field_Move("A", 0, "A", 0, "A", 0, "A", 0, HOME, "KING", "KING")
 
-    def Field_Move(self, rowi, columni, rowf, columnf, type, name):  # t = us
+    def Field_Move(self, rowi, columni, rowf, columnf, rowi2, columni2, rowf2, columnf2, type, name, name2):  # t = us
         """
                      row
              a  b  c  d  e  f  i  j
@@ -270,6 +277,8 @@ class Uart_ISUS:
         d = 0
         rowi = rowi.upper()
         rowf = rowf.upper()
+        rowi2 = rowi2.upper()
+        rowf2 = rowf2.upper()
         list_num = {"A": 1, "B": 2, "C": 3,
                     "D": 4, "E": 5, "F": 6, "G": 7, "H": 8}
         # if list_num[row] <= 4:
@@ -299,25 +308,26 @@ class Uart_ISUS:
             d = 360 + d
 
         # name = name.upper()
-        list_name = {"KING": 1, "QUEEN": 2, "ROOK": 3,
-                     "KNIGHT": 3, "BISHOP": 3, "PAWN": 4}
+        # list_name = {"KING":1, "QUEEN":2, "ROOK":3, "KNIGHT":3, "BISHOP":3, "PAWN":4}
         min_degree = 30
         max_degree = 50
         degree = (min_degree + (max_degree - min_degree)
-                  * (name/4))  # list_name[name]
+                  * (name))  # list_name[name]/4
+        degree2 = (min_degree + (max_degree - min_degree)
+                   * (name2))  # list_name[name2]/4
         self.iPacket[0] = HEADER1
         self.iPacket[1] = HEADER2
         self.iPacket[2] = 3 + 8
         self.iPacket[3] = WRITE_DATA  # Instruction
         self.iPacket[4] = FIELD_CHESS
-        self.iPacket[5] = list_num[rowi]
-        self.iPacket[6] = columni
-        self.iPacket[7] = list_num[rowf]
-        self.iPacket[8] = columnf
+        self.iPacket[5] = (list_num[rowi] << 4) + columni
+        self.iPacket[6] = (list_num[rowf] << 4) + columnf
+        self.iPacket[7] = (list_num[rowi2] << 4) + columni2
+        self.iPacket[8] = (list_num[rowf2] << 4) + columnf2
         self.iPacket[9] = self.SHIFT_TO_LSB(type)
         self.iPacket[10] = self.SHIFT_TO_MSB(type)
-        self.iPacket[11] = self.SHIFT_TO_LSB(self.value_convert(degree))
-        self.iPacket[12] = self.SHIFT_TO_MSB(self.value_convert(degree))
+        self.iPacket[11] = int(degree)
+        self.iPacket[12] = int(degree2)
         self.iPacket[13] = self.Sum(13, self.iPacket)
         self.sendIPacket(14)
 
@@ -368,10 +378,11 @@ class Uart_ISUS:
                             (self.rPacket[8] << 8) & 0xFF00)
                         self.presentJoint[2] = self.rPacket[9] | (
                             (self.rPacket[10] << 8) & 0xFF00)
-                        self.presentJoint[3] = self.rPacket[11] | (
+                        # self.presentJoint[3] = self.rPacket[11] | ((self.rPacket[12] << 8) & 0xFF00)
+                        self.complete = self.rPacket[11] | (
                             (self.rPacket[12] << 8) & 0xFF00)
                     if self.rPacket[4] == PRESENT_XYZ:
-                        print("XYZ")
+                        # print("XYZ")
                         self.presentXYZ[0] = self.rPacket[5] | (
                             (self.rPacket[6] << 8) & 0xFF00)
                         self.presentXYZ[1] = self.rPacket[7] | (

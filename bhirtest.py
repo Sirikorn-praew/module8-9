@@ -27,6 +27,10 @@ board1 = chess.Board(fen1)
 # board1.push(move1)
 board2 = chess.Board(fen2)
 
+fenboard = board1.fen()
+boardTest = chess.Board(fenboard)
+print(boardTest)
+
 # listBoard1 = [str(board1)]
 # listBoard2 = [str(board2)]
 # # print(listBoard1)

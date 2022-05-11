@@ -4,6 +4,9 @@ from Detection import color_classify
 from Detection import variable
 
 
+# cap_side = MediaPipe_check_Hand(1)
+
+import chess
 # import DetectAllPoints as dtp
 # import DetectionFunctions as df
 # import color_classify
@@ -25,21 +28,21 @@ import mediapipe as mp
 # import keras
 
 
-mp_hands = mp.solutions.hands
+# mp_hands = mp.solutions.hands
 
-tb=variable.to_trackback
-tb_top=tb()
+# tb=variable.to_trackback
+# tb_top=tb()
 
-get_m = variable.get_matrix_variable
-top_data = get_m()
-side_data = get_m()
+# get_m = variable.get_matrix_variable
+# top_data = get_m()
+# side_data = get_m()
 
-cap_top = MediaPipe_check_Hand()
-# cap_side = MediaPipe_check_Hand(1)
-modelE4_top = EfficientNetModel(
-    '\Detection\checkpoint_top', (380, 380))
-modelE4 = EfficientNetModel(
-    '.\Detection\checkpoint_data', (380, 380))
+# cap_top = MediaPipe_check_Hand()
+# # cap_side = MediaPipe_check_Hand(1)
+# modelE4_top = EfficientNetModel(
+#     '.\Detection\checkpoint_top', (380, 380))
+# modelE4 = EfficientNetModel(
+#     '.\Detection\checkpoint_data', (380, 380))
 
 class MediaPipe_check_Hand:
     def __init__(self):
@@ -77,7 +80,16 @@ class MediaPipe_check_Hand:
                 return 'Hand'
 
 
+mp_hands = mp.solutions.hands
 
+tb = variable.to_trackback
+tb_top = tb()
+
+get_m = variable.get_matrix_variable
+top_data = get_m()
+side_data = get_m()
+
+cap_top = MediaPipe_check_Hand()
 
 
 class EfficientNetModel:
@@ -100,7 +112,6 @@ class EfficientNetModel:
         resized_image = self.resize_image(image)
         image_array = np.array([resized_image])
         return tf.argmax(self.model.predict(image_array), axis=1)
-
 
 
 # modelE4_top = EfficientNetModel(
@@ -495,15 +506,17 @@ def convert_to_fen(list_64str):
     print(fen)
     return fen
 
+
 def compare_move(old_board, new_board):
-    change=[]
+    change = []
     for index, (old, new) in enumerate(zip(old_board, new_board)):
         if old != new:
             # print(index, old,new)
-            change.append([index, int(old),int(new)])
+            change.append([index, int(old), int(new)])
     return change
 
-def crop_and_predict():
+
+def crop_and_predict(modelE4):
     # crop
     print('crop')
     top_data.list_of_image_new = []
@@ -552,7 +565,8 @@ def crop_and_predict():
 
     return fen
 
-def crop_and_predict_empty():
+
+def crop_and_predict_empty(modelE4_top):
     print('crop')
     top_data.list_of_image_new = []
     for group in range(len(top_data.new_matrix_to_crop)):
@@ -566,14 +580,15 @@ def crop_and_predict_empty():
 
         length = 3
         h1 = length
-        h2 =  img.shape[1]-length
+        h2 = img.shape[1]-length
         w1 = length
         w2 = img.shape[0]-length
         cropped_image = img[h1:h2, w1:w2]
 
-        ans.append(modelE4_top.make_prediction(cropped_image ))
+        ans.append(modelE4_top.make_prediction(cropped_image))
         pred = tf.concat(ans, axis=0)
     return pred
+
 
 def save_plot_point_image():
     image_point = df.color_points(
@@ -591,21 +606,20 @@ def save_plot_point_image():
     image_point = df.color_points(
         side_data.clear_image.copy(), side_data.new_matrix.copy())
     cv2.imwrite('side_data2.jpg', image_point)
+
+
 def save_plot_point_image_top():
     image_point = df.color_points(
         top_data.clear_image.copy(), top_data.matrix.copy())
     cv2.imwrite('top_data.jpg', image_point)
-
 
     image_point = df.color_points(
         top_data.clear_image.copy(), top_data.new_matrix.copy())
     cv2.imwrite('top_data2.jpg', image_point)
 
 
-
-
-
-def main_chess_piece(frame_side, frame_top,new_detect):#new_detect==1 is use detection board
+# new_detect==1 is use detection board
+def main_chess_piece(frame_side, frame_top, new_detect, model):
 
     check_hand_mediaPipe = cap_top.check_hand(frame_top)
     print('detect', check_hand_mediaPipe)
@@ -613,18 +627,19 @@ def main_chess_piece(frame_side, frame_top,new_detect):#new_detect==1 is use det
         return None
 
     try:
-        if new_detect==1:
+        if new_detect == 1:
             top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
                 frame_top)
             side_data.clear_image, side_data.matrix, side_data.new_matrix, side_data.new_matrix_to_crop = finding_new_matrix(
                 frame_side)
 
-        save_plot_point_image()
-        
-        top_data.list_of_image_old = copy.deepcopy(top_data.list_of_image_new)
-        side_data.list_of_image_old = copy.deepcopy(side_data.list_of_image_new)
+        # save_plot_point_image()
 
-        return crop_and_predict()
+        top_data.list_of_image_old = copy.deepcopy(top_data.list_of_image_new)
+        side_data.list_of_image_old = copy.deepcopy(
+            side_data.list_of_image_new)
+
+        return crop_and_predict(model)
 
     except:
         print('sad')
@@ -642,82 +657,92 @@ def main_chess_piece(frame_side, frame_top,new_detect):#new_detect==1 is use det
 
 #         save_plot_point_image()
 #         return crop_and_predict()
-        
+
 #     except:
 #         print('sad too')
 #         return None
 def convert_color(list_of_color):
-    if top_data.color_threshold=='L':
+    if tb_top.color_threshold == 'H':
         for i in range(len(list_of_color)):
-            if list_of_color[i]==0:list_of_color[i]= 1
-            elif list_of_color[i]==1: ist_of_color[i]= 0
+            if list_of_color[i] == 0:
+                list_of_color[i] = 1
+            elif list_of_color[i] == 1:
+                list_of_color[i] = 0
+
 
 def define_first_board_color():
     print(len(top_data.list_of_image_new))
-    not_empty_image=[]
+    not_empty_image = []
     # black=[]
     # white=[]
-    for  image in range(16):
+    for image in range(16):
         # print(image)
         # black.append(color_classify.avg(top_data.list_of_image_new[image]))
         not_empty_image.append(top_data.list_of_image_new[image])
-    for  image in range(48,64):
+    for image in range(48, 64):
         # print(image)
         # white.append(color_classify.avg(top_data.list_of_image_new[image]))
         not_empty_image.append(top_data.list_of_image_new[image])
-    tb_top.centroid , labels = color_classify.kmeans_classify_track(not_empty_image)
+    tb_top.centroid, labels = color_classify.kmeans_classify_track(
+        not_empty_image)
     # print(labels)
-    if labels[0] ==0: 
-        top_data.color_threshold='L'#Low is Black
-        for i in range(len(labels)):
-            if labels[i]==0:labels[i]= 1
-            else: labels[i]= 0
-    else:
-        top_data.color_threshold='H'
-    # if min(black)> max(white): 
+    # if labels[0] == 0:
+    #     tb_top.color_threshold = 'H'  # Low is Black
+    #     for i in range(len(labels)):
+    #         if labels[i] == 0:
+    #             labels[i] = 1
+    #         else:
+    #             labels[i] = 0
+    # else:
+    #     tb_top.color_threshold = 'L'
+    # if min(black)> max(white):
     #     top_data.color_threshold='H'
     #     top_data.thresh= (min(black)+ max(white))/2
-    # elif min(white)> max(black):  
+    # elif min(white)> max(black):
     #     top_data.color_threshold='L'
     #     top_data.thresh=(min(white)+ max(black))/2
-    return top_data.thresh
+    # return tb_top.thresh
 
-def predict_color_board(index_not_empty):# classify_color
+
+def predict_color_board(index_not_empty):  # classify_color
     print('evaluate color')
-    list_of_color = [-1, -1, -1, -1, -1, -1, -1, -1, 
-                     -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, 
+    list_of_color = [-1, -1, -1, -1, -1, -1, -1, -1,
                      -1, -1, -1, -1, -1, -1, -1, -1,
                      -1, -1, -1, -1, -1, -1, -1, -1,
                      -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, 
+                     -1, -1, -1, -1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1, -1, -1, -1,
                      -1, -1, -1, -1, -1, -1, -1, -1]
-    list_predict=[]
-    list_of_image_to_classify=[]
+    list_predict = []
+    list_of_image_to_classify = []
     for index in index_not_empty:
         list_of_image_to_classify.append(top_data.list_of_image_new[index])
         # color=color_classify.avg(cropped_image)
         # if color > top_data.thresh: list_of_color[index]=0
         # else:list_of_color[index]=1
-    
+
     list_predict = color_classify.kmeans_classify(list_of_image_to_classify)
     print('predict_color')
     print(list_predict)
     print(index_not_empty)
-    count=0
+    count = 0
     for index in index_not_empty:
-        list_of_color[index] =list_predict[count]
-        count+=1
-    if top_data.color_threshold=='L':
+        list_of_color[index] = list_predict[count]
+        count += 1
+    if list_predict[0] == 0:
         for i in range(len(list_of_color)):
-            if list_of_color[i]==0:list_of_color[i]= 1
-            elif list_of_color[i]==1: list_of_color[i]= 0
+            if list_of_color[i] == 0:
+                list_of_color[i] = 1
+            elif list_of_color[i] == 1:
+                list_of_color[i] = 0
 
-    tb_top.board_color_new=copy.deepcopy(list_of_color)
+    tb_top.board_color_new = copy.deepcopy(list_of_color)
 
     # print('list_of_color',list_of_color)
     # color_classify.kmeans_track()
     return list_of_color
+
 
 def get_fen_pieces(board):
     """
@@ -726,13 +751,13 @@ def get_fen_pieces(board):
     ret = None
     cnt = 0  # counter for successive empty cell along the row
     save = []  # temp container
-    
+
     board = board[::-1]  # reverse first
 
     for i, v in enumerate(board):
         if v == '.':
             cnt += 1
-            
+
             # sum up the successive empty cell and update save
             if cnt > 1:
                 save[len(save)-1] = str(cnt)
@@ -742,67 +767,68 @@ def get_fen_pieces(board):
             save.append(v)  # add
             cnt = 0  # reset, there is no successive number
 
-        if (i+1)%8 == 0:  # end of row
+        if (i+1) % 8 == 0:  # end of row
             save.append('/')
             cnt = 0
-            
-    ret = ''.join(save)  # convert list to string
+
+    ret = ''.join(save)  # convert list to stringcolor_choose
     # print(ret)
-    
+
     return ret
 
-def fen_to_list(fen):
-    fen_before
+
+# def fen_to_list(fen):
+#     fen_before
 # def update_move():
 
-import chess 
-def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 is use detection board #color1is detect black
 
-    tb_top.board_list_old=list(str(chess.Board(fen_before)).replace(' ', '').replace('\n', ''))
+# new_detect==1 is use detection board #color 1 is detect black
+def use_trackback(frame_top, new_detect, fen_before, color_choose, model):
+    print('start', tb_top.old_pred_empty)
+    tb_top.board_list_old = list(
+        str(chess.Board(fen_before)).replace(' ', '').replace('\n', ''))
     print('old board')
-    
+
     for c in range(64):
-        if tb_top.board_list_old[c]== '.': 
-            tb_top.board_color_old[c]=-1
+        if tb_top.board_list_old[c] == '.':
+            tb_top.board_color_old[c] = -1
             tb_top.old_pred_empty[c] = 0
         else:
             tb_top.old_pred_empty[c] = 1
-            if tb_top.board_list_old[c].islower(): 
-                tb_top.board_color_old[c]=1
-            if tb_top.board_list_old[c].isupper(): 
-                tb_top.board_color_old[c]=0
-    print(np.reshape(tb_top.board_list_old,(8,8)))
-    print(np.reshape(tb_top.board_color_old,(8,8)))
-    print(np.reshape(tb_top.old_pred_empty,(8,8))) 
+            if tb_top.board_list_old[c].islower():
+                tb_top.board_color_old[c] = 1
+            if tb_top.board_list_old[c].isupper():
+                tb_top.board_color_old[c] = 0
+    print(np.reshape(tb_top.board_list_old, (8, 8)))
+    print(np.reshape(tb_top.board_color_old, (8, 8)))
+    print(np.reshape(tb_top.old_pred_empty, (8, 8)))
     check_hand_mediaPipe = cap_top.check_hand(frame_top)
     print('detect', check_hand_mediaPipe)
     if check_hand_mediaPipe == 'Hand' or check_hand_mediaPipe == None:
         return None
 
-    if new_detect==1:
+    if new_detect == 1:
         top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
             frame_top)
 
     top_data.clear_image = copy.deepcopy(frame_top)
 
-    tb_top.new_pred_empty=crop_and_predict_empty()
+    tb_top.new_pred_empty = crop_and_predict_empty(model)
     save_plot_point_image_top()
 
     print('empty')
-    print(np.reshape(tb_top.new_pred_empty,(8,8)))
-    tb_top.fen_before=fen_before
+    print(np.reshape(tb_top.new_pred_empty, (8, 8)))
+    tb_top.fen_before = fen_before
     # print(np.reshape(tb_top.board_list_old,(8,8)))
 
-    if 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' in fen_before and tb_top.count==0:
-        print('first time')
-        #Find first Threshold
-        define_first_board_color()
-        tb_top.count+=1
+    # if 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' in fen_before and tb_top.count == 0:
+    #     print('first time')
+    #     # Find first Threshold
+    #     define_first_board_color()
+    #     tb_top.count += 1
 
-        return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
-    
-    
-
+    #     return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
+    top_data.index_not_empty = []
     for index in range(len(tb_top.new_pred_empty)):
         if tb_top.new_pred_empty[index] != 0:
             top_data.index_not_empty.append(index)
@@ -810,66 +836,68 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
 
     predict_color_board(top_data.index_not_empty)
 
-    print('predict_color_board\n',np.reshape(tb_top.board_color_new,(8,8)))
-    print('old_color_board\n',np.reshape(tb_top.board_color_old,(8,8)))
-
+    print('predict_color_board\n', np.reshape(tb_top.board_color_new, (8, 8)))
+    print('old_color_board\n', np.reshape(tb_top.board_color_old, (8, 8)))
 
     # print('old\n',np.reshape(tb_top.board_color_old,(8,8)))
-    color_change =compare_move(tb_top.board_color_old, tb_top.board_color_new)
-    move =compare_move(tb_top.old_pred_empty, tb_top.new_pred_empty)
+    color_change = compare_move(tb_top.board_color_old, tb_top.board_color_new)
+    move = compare_move(tb_top.old_pred_empty, tb_top.new_pred_empty)
 
     tb_top.board_list_new = copy.deepcopy(tb_top.board_list_old)
     print('compare')
-    print('piece',move)
-    print('color',color_change)
-    if len(move)<=3:
+    print('piece', move)
+    print('color', color_change)
+    if len(move) <= 3:
         for changes in color_change:
-            if changes[2]== color_choose:
+            if changes[2] == color_choose:
                 print('new_pos')
                 new_position = changes[0]
         for changes in move:
-            if changes[1] == 1 and changes[2]==0:
+            if changes[1] == 1 and changes[2] == 0:
                 piece_to_move = changes[0]
-        print(new_position,piece_to_move)
-        
-        tb_top.board_list_new[new_position]=copy.deepcopy(tb_top.board_list_old[piece_to_move])
-        tb_top.board_list_new[piece_to_move]='.'
-        
-    elif len(move)>=4 :#castling
-        if move[0] == [60,0,-1] and move[3] == [63,0,-1]:
-            tb_top.board_list_new[60]='.'
-            tb_top.board_list_new[61]='R'
-            tb_top.board_list_new[62]='K'
-            tb_top.board_list_new[63]='.'
+        print(new_position, piece_to_move)
 
-        elif move[0] == [56,0,-1] and move[3] == [60,0,-1]:
-            tb_top.board_list_new[56]='.'
-            tb_top.board_list_new[57]='K'
-            tb_top.board_list_new[58]='R'
-            tb_top.board_list_new[60]='.'
-            
-        elif move[0] == [4,1,-1] and move[3] == [7,1,-1]:
-            tb_top.board_list_new[4]='.'
-            tb_top.board_list_new[5]='r'
-            tb_top.board_list_new[6]='k'
-            tb_top.board_list_new[7]='.'
+        tb_top.board_list_new[new_position] = copy.deepcopy(
+            tb_top.board_list_old[piece_to_move])
+        tb_top.board_list_new[piece_to_move] = '.'
 
-        elif move[0] == [0,1,-1] and move[3] == [4,1,-1]:
-            tb_top.board_list_new[0]='.'
-            tb_top.board_list_new[1]='k'
-            tb_top.board_list_new[2]='r'
-            tb_top.board_list_new[4]='.'
-        else: return None
-    else: return None
+    elif len(move) >= 4:  # castling
+        if color_change[0] == [60, 0, -1] and color_change[3] == [63, 0, -1]:
+            tb_top.board_list_new[60] = '.'
+            tb_top.board_list_new[61] = 'R'
+            tb_top.board_list_new[62] = 'K'
+            tb_top.board_list_new[63] = '.'
+
+        elif color_change[0] == [56, 0, -1] and color_change[3] == [60, 0, -1]:
+            tb_top.board_list_new[56] = '.'
+            tb_top.board_list_new[58] = 'K'
+            tb_top.board_list_new[59] = 'R'
+            tb_top.board_list_new[60] = '.'
+
+        elif color_change[0] == [4, 1, -1] and color_change[3] == [7, 1, -1]:
+            tb_top.board_list_new[4] = '.'
+            tb_top.board_list_new[5] = 'r'
+            tb_top.board_list_new[6] = 'k'
+            tb_top.board_list_new[7] = '.'
+
+        elif color_change[0] == [0, 1, -1] and color_change[3] == [4, 1, -1]:
+            tb_top.board_list_new[0] = '.'
+            tb_top.board_list_new[2] = 'k'
+            tb_top.board_list_new[3] = 'r'
+            tb_top.board_list_new[4] = '.'
+        else:
+            return None
+    else:
+        return None
     print('Answer')
-    print(np.reshape(tb_top.board_list_new,(8,8)))
+    print(np.reshape(tb_top.board_list_new, (8, 8)))
 
-    tb_top.old_pred_empty=copy.deepcopy(tb_top.new_pred_empty)
-    tb_top.board_list_old=copy.deepcopy(tb_top.board_list_new)
-    tb_top.board_color_old=copy.deepcopy(tb_top.board_color_new)
-    print(get_fen_pieces(tb_top.board_list_new))
-    return get_fen_pieces(tb_top.board_list_new)
-        
+    tb_top.old_pred_empty = list(copy.deepcopy(tb_top.new_pred_empty))
+    tb_top.board_list_old = copy.deepcopy(tb_top.board_list_new)
+    tb_top.board_color_old = copy.deepcopy(tb_top.board_color_new)
+    print(convert_to_fen(tb_top.board_list_new))
+    return convert_to_fen(tb_top.board_list_new)
+
     # find_color=None
     # index_collect=None
     # index_to_change=None
@@ -880,7 +908,7 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
     #         if m[2] == 0:
     #             print('index_to_change')
     #             index_to_change=m[0]
-            
+
     #         if tb_top.board_color_new[m[0]] == color_choose:
     #             index_collect=m[0]
     # print('find_color',find_color,color_choose)
@@ -890,23 +918,12 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
     # print(tb_top.board_list_old[index_to_change])
     # tb_top.board_list_new[index_collect]=tb_top.board_list_old[index_to_change]
     # tb_top.board_list_new[index_to_change]=tb_top.board_list_old[index_collect]
-    
+
     # # print(tb_top.board_list_square_new)
 
     # # update_move()
     # # tb_top.board_list_new
 
-
-
-
-
-
-
-
-
-
-
-    
     # for index in range(len(tb_top.new_pred)):
     #     if tb_top.new_pred[index] != '.':
     #         top_data.index_not_empty.append(index)
@@ -919,22 +936,22 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
     # print(tb_top.new_pred)
     # print('old')
     # print(tb_top.old_pred)
-    # # tb_top.new_pred=[1, 1, 1, 1, 1, 1, 1, 1, 
+    # # tb_top.new_pred=[1, 1, 1, 1, 1, 1, 1, 1,
     # #                  1, 1, 1, 1, 1, 1, 1, 1,
-    # #                  0, 0, 0, 0, 0, 0, 0, 0, 
+    # #                  0, 0, 0, 0, 0, 0, 0, 0,
     # #                  0, 0, 0, 0, 0, 0, 0, 0,
     # #                  0, 0, 0, 0, 0, 1, 0, 0,
     # #                  0, 0, 0, 0, 0, 0, 0, 0,
-    # #                  1, 1, 1, 1, 1, 1, 1, 1, 
+    # #                  1, 1, 1, 1, 1, 1, 1, 1,
     # #                  1, 1, 1, 1, 1, 1, 1, 1]
 
     # # tb_top.old_pred =[1, 1, 0, 0, 1, 1, 1, 1,
     #                 #   1, 1, 1, 0, 1, 0, 0, 1,
-    #                 #   0, 0, 1, 1, 1, 0, 1, 0, 
-    #                 #   0, 0, 0, 0, 0, 0, 0, 0, 
-    #                 #   0, 0, 0, 0, 1, 0, 0, 1, 
+    #                 #   0, 0, 1, 1, 1, 0, 1, 0,
+    #                 #   0, 0, 0, 0, 0, 0, 0, 0,
+    #                 #   0, 0, 0, 0, 1, 0, 0, 1,
     #                 #   0, 0, 0, 1, 0, 0, 1, 0,  compare_move
-    #                 #   1, 1, 1, 0, 1, 1, 0, 0, 
+    #                 #   1, 1, 1, 0, 1, 1, 0, 0,
     #                 #   1, 1, 1, 1, 0, 1, 1, 1]
 
     # if tb_top.old_pred ==[]:
@@ -944,8 +961,8 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
     # print(change)
     # update_board(change)
     # return tb_top.new_pred
-    
-    
+
+
 # if __name__ == "__main__":
 #     # file ='D:\Year4_2\FRAwebpro\module8-9\Detection/test_picture/top_for_p1.jpg'
 #     file='D:\Year4_2\FRAwebpro\module8-9\Detection/test_picture\p1.jpg'
@@ -970,5 +987,3 @@ def use_trackback(frame_top,new_detect,fen_before,color_choose): #new_detect==1 
     # frame_top3=cv2.imread(file3)
     # # fen_before='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     # use_trackback(frame_top3,0,fen_before,1)
-
-

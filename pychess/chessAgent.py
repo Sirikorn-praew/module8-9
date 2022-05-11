@@ -69,7 +69,7 @@ class ChessAgent:
         best_move_found = chess.Move.null()
 
         # print(multiprocessing.cpu_count())
-        pool = Pool(8)  # os.cpu_count()
+        pool = Pool(os.cpu_count())  # os.cpu_count()
         value = pool.starmap(self.multiProcessMinimax, zip(
             repeat(depth), repeat(board), moves))
 

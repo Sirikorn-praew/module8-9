@@ -17,6 +17,7 @@
 ##
 ################################################################################
 
+import traceback
 from Comunication import Serial_Comunication_ISUS
 import re
 import sys
@@ -45,14 +46,13 @@ from pychess.board import ChessBoard
 from pychess.info import Info
 
 # # DETECTION
-import tensorflow as tf
-from tensorflow.python.client import device_lib
+# import tensorflow as tf
+# from tensorflow.python.client import device_lib
 import mediapipe as mp
 
 
-from Detection.main_detection import *
-# from Detection import variable
-
+from Detection.main_detection2 import *
+from Detection import variable
 
 # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 # device_lib.list_local_devices()
@@ -74,6 +74,8 @@ class MainWindow(QMainWindow):
         self.stack_process = 0
         self.video_size = QSize(480, 270)
         self.isus = 0
+        self.startstop = 0
+        self.stackfen = ''
 
         self.board = ChessBoard(self)
         self.board.sqr_size = 720/8
@@ -199,19 +201,26 @@ class MainWindow(QMainWindow):
             lambda: self.setup_camera2(self.cam2_process_label))
         self.ui.btn_close_camera_process.clicked.connect(
             lambda: self.close_camera(4, self.cam2_process_label))
-        self.ui.btn_capture_process.clicked.connect(
-            lambda: self.capture_camera('process'))
+        self.ui.btn_detect_process.clicked.connect(
+            lambda: self.capture_camera('process', 1, 'process'))
+        self.ui.btn_predict_process.clicked.connect(
+            lambda: self.capture_camera('process', 0, 'process'))
         self.ui.btn_start_process.clicked.connect(self.startProcess)
         self.ui.status_turn_process.setText(self.showTurn())
         # self.ui.btn_reset_process.clicked.connect(
         #     self.board_detect.draw_squares)
         self.ui.btn_send_startstop_process.clicked.connect(
-            self.startstopProcess)
+            self.sendStartStopProcess)
         self.ui.btn_send_home_process.clicked.connect(self.sendsetHome)
         self.ui.btn_send_chess_home_process.clicked.connect(
             self.sendChess_Home)
         self.ui.btn_send_zero_field_process.clicked.connect(
-            self.sendChess_Home)
+            self.sendField_zero)
+        self.ui.btn_agent_play.clicked.connect(self.agentPlay)
+        self.ui.btn_cancle_process.clicked.connect(
+            self.board_process.refresh_from_state)
+        self.ui.btn_undo_process.clicked.connect(self.undoMove)
+        self.ui.btn_redo_process.clicked.connect(self.redoMove)
 
         # Function Page Game
         self.ui.btn_new_game.clicked.connect(self.chooseSide)
@@ -245,8 +254,10 @@ class MainWindow(QMainWindow):
             lambda: self.setup_camera2(self.cam2_detect_label))
         self.ui.btn_close_camera_detect.clicked.connect(
             lambda: self.close_camera(4, self.cam2_detect_label))
-        self.ui.btn_capture_detect.clicked.connect(
-            lambda: self.capture_camera('detect'))
+        self.ui.btn_detect_detect.clicked.connect(
+            lambda: self.capture_camera('detect', 1, 'test detect'))
+        self.ui.btn_predict_detect.clicked.connect(
+            lambda: self.capture_camera('detect', 0, 'test detect'))
         self.ui.btn_reset_detect.clicked.connect(self.resetBoardDetect)
 
         # Function Page Setup
@@ -272,6 +283,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_send_grip_open.clicked.connect(self.sendGripOpen)
         self.ui.btn_send_grip_close.clicked.connect(self.sendGripClose)
         self.ui.btn_send_chess_home.clicked.connect(self.sendChess_Home)
+        self.ui.btn_send_zero_field.clicked.connect(self.sendField_zero)
         self.ui.btn_send_pick_place.clicked.connect(self.sendChess_Pick)
 
         self.ui.horizontalSlider_joint_1.valueChanged.connect(
@@ -424,7 +436,7 @@ class MainWindow(QMainWindow):
         except:
             return "---"
 
-    def get_move(board1, board2, who_moved):
+    def get_move(self, board1, board2, who_moved):
         nums = {1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f", 7: "g", 8: "h"}
         str_board = str(board1).split("\n")
         str_board2 = str(board2).split("\n")
@@ -491,14 +503,61 @@ class MainWindow(QMainWindow):
         UIFunctions.labelPage(self, "Select Side")
 
     def startProcess(self):
-        self.capture_camera('detect_process')
+        self.capture_camera('detect_process', 1, 'set')
         self.board_process.start_game_process()
+
+    def agentPlay(self):
+        board_after = chess.Board(self.stackfen)
+        move = self.get_move(
+            self.board_process.gamestate.boardPlay, board_after, self.board_process.gamestate.boardPlay.turn)
+        # move = chess.Move.from_uci(move_uci)
+        self.board_process.player_move(move)
+
+    def undoMove(self):
+        if self.board_process.gamestate.undo_info:
+
+            # Undo computer's move
+            # Get move at the top of move stack
+            move = self.board.gamestate.undo_info[-1]['move']
+            # Move piece back to source square
+            self.board_process.move_glide(move, True)
+            self.board_process.gamestate.undo_move()  # Undo move in game state
+            self.board_process.refresh_from_state()  # Refresh board
+            self.board_process.undone_stack.append(move)
+
+            # Undo player's move
+            if self.board_process.gamestate.undo_info:
+                # Get move at the top of move stack
+                move = self.board_process.gamestate.undo_info[-1]['move']
+                # Move piece back to source square
+                self.board_process.move_glide(move, True)
+                self.board_process.gamestate.undo_move()  # Undo move in game state
+                self.board_process.refresh_from_state()  # Refresh board
+                self.board_process.undone_stack.append(move)
+
+            else:
+                self.board_process.undone_stack.clear()
+                self.board_process.search_thread.start()
+
+    def redoMove(self):
+        if self.board_process.undone_stack:
+
+            move = self.board_process.undone_stack.pop()
+            self.board_process.move_glide(move, False)
+            self.board_process.gamestate.make_move(move)
+            self.board_process.refresh_from_state()
+
+            move = self.board_process.undone_stack.pop()
+            self.board_process.move_glide(move, False)
+            self.board_process.gamestate.make_move(move)
+            self.board_process.refresh_from_state()
 
     ## ==> END ##
 
     ########################################################################
     # START ==> SETUP FUNCTION
     ########################################################################
+
     def updateAngulaJoint_1_toText(self, value):
         self.ui.value_angular_joint_1.setValue(value)
 
@@ -548,6 +607,14 @@ class MainWindow(QMainWindow):
         startstop_4 = int(self.ui.checkBox_joint_4.isChecked())
         ISUS_UART.StartStop_Move(
             startstop_1, startstop_2, startstop_3, startstop_4, 1)
+
+    def sendStartStopProcess(self):
+        if self.startstop == 0:
+            ISUS_UART.StartStop_Move(1, 1, 1, 1, 1)
+            self.startstop = 1
+        else:
+            ISUS_UART.StartStop_Move(0, 0, 0, 0, 1)
+            self.startstop = 0
 
     def sendsetHome(self):
         ISUS_UART.StartStop_Move(1, 1, 1, 1, 1)
@@ -738,34 +805,64 @@ class MainWindow(QMainWindow):
         except:
             print(f"capture2 is invalid.")
 
-    def capture_camera(self, status):
+    def capture_camera(self, status, detect, page):
+        self.ui.status_process.setText('Capturing and predicting...')
         # self.setup_camera1(self.cam1_detect_label)
         # self.setup_camera2(self.cam2_detect_label)
-        # print("evaluate chess pieces")
-        # print(self.image_side)
-        # cv2.imwrite('image_side.jpg', self.image_side)
-        # cv2.imwrite('image_top.jpg', self.image_top)
-        # fen = main_detection.main_chess_piece(self.image_top, self.image_side)
-        fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+
+        fen_before = self.board_process.gamestate.getFen()
+        print(fen_before, detect)
+        if page == 'test detect':
+            self.setup_camera1(self.cam1_detect_label)
+            self.setup_camera2(self.cam2_detect_label)
+            print("evaluate chess pieces")
+            cv2.imwrite('image_side.jpg', self.image_side)
+            cv2.imwrite('image_top.jpg', self.image_top)
+
+            fen = main_chess_piece(
+                self.image_top, self.image_side, detect, modelE4)
+        elif page == 'set':
+            fen = setting_chess.starting_fen
+            self.board_process.set_fen(fen)
+        else:
+            self.setup_camera1(self.cam1_process_label)
+            self.setup_camera2(self.cam2_process_label)
+            print("evaluate chess pieces")
+            cv2.imwrite('image_side.jpg', self.image_side)
+            cv2.imwrite('image_top.jpg', self.image_top)
+
+            user_is_black = 1 if self.board_process.user_is_white == False else 0
+            fen = use_trackback(self.image_side, detect,
+                                fen_before, user_is_black, modelE4_top)
+            print("out", fen)
+
+        # fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
         # fen = '8/6P1/7k/4B3/4B2K/8/8/8 w - - 0 1'
         # fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
         # fen = None
+
         if fen != None:
             self.ui.status_fen_detect.setText(fen)
             self.ui.status_detect.setText('Detected!')
+            self.ui.status_fen_process.setText(fen)
+            self.ui.status_process.setText('Detected!')
         else:
             self.ui.status_fen_detect.setText('Value')
             self.ui.status_detect.setText('S A D')
+            self.ui.status_fen_process.setText('Value')
+            self.ui.status_process.setText('S A D')
         if status == 'detect':
             self.board_detect.set_fen(fen)
-        elif status == 'detect_process':
-            self.board_process.set_fen(fen)  # setting_chess.starting_fen
+        # elif status == 'detect_process':
+        #     self.board_process.set_fen(fen)  # setting_chess.starting_fen
         elif status == 'process':
-            board_after = chess.Board(fen)
-            move_uci = self.get_move(
-                self.board_process.gamestate.boardPlay, board_after, self.board_process.gamestate.boardPlay.turn)
-            move = chess.Move.from_uci(move_uci)
-            self.board_process.player_move(move)
+            self.board_process.showfen(fen)
+            self.stackfen = fen
+            # board_after = chess.Board(fen)
+            # move = self.get_move(
+            #     self.board_process.gamestate.boardPlay, board_after, self.board_process.gamestate.boardPlay.turn)
+            # # move = chess.Move.from_uci(move_uci)
+            # self.board_process.player_move(move)
 
     def resetBoardDetect(self):
         fen = '8/8/8/8/8/8/8/8'  # w - - 0 1
@@ -793,7 +890,7 @@ class MainWindow(QMainWindow):
         if ISUS_UART.getStatus() == 99:
             ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)
             print("ft")
-            self.timer.stop()
+            # self.timer.stop()
             # self.timer.deleteLater()
             ISUS_UART.resetStatus()
 
@@ -830,19 +927,21 @@ class MainWindow(QMainWindow):
             columniR = 8
             rowfR = "f"
             columnfR = 8
-        self.timer = QTimer()
-        ISUS_UART.Chess_Pick(rowiK, columniK, rowfK, columnfK, 1)
+        # self.timer = QTimer()
+        # ISUS_UART.Chess_Pick(rowiK, columniK, rowfK, columnfK, 1)
+        ISUS_UART.Chess_Pick2(rowiK, columniK, rowfK,
+                              columnfK, rowiR, columniR, rowfR, columnfR, 1, 3)
 
         # lambda: self.waitFeedback(ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3))
-        self.timer.timeout.connect(lambda: self.waitFeedback(
-            rowiR, columniR, rowfR, columnfR))
+        # self.timer.timeout.connect(lambda: self.waitFeedback(
+        #     rowiR, columniR, rowfR, columnfR, 3))
 
         # self.timer.timeout.connect(lambda: waitFeedback(
         #     ft=ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)))
         # QTimer.singleShot(200, lambda: ISUS_UART.Chess_Pick(
         #     rowiR, columniR, rowfR, columnfR, 3))
 
-        self.timer.start(2000)
+        # self.timer.start(2000)
         # ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)
 
     def promotion_move(self, from_square, to_square):
@@ -857,11 +956,13 @@ class MainWindow(QMainWindow):
         columni = int(from_square[1])
         rowf = to_square[0]
         columnf = int(to_square[1])
-        ISUS_UART.Chess_Drop(
-            rowf, columnf, list_name[piece_captured])
-        ISUS_UART.Uart_Read()
-        ISUS_UART.Chess_Pick(
-            rowi, columni, rowf, columnf, list_name[piece_move])
+        ISUS_UART.Chess_Drop(rowi, columni, rowf, columnf, rowf,
+                             columnf, list_name[piece_move], list_name[piece_captured])
+        # ISUS_UART.Chess_Drop(
+        #     rowf, columnf, list_name[piece_captured])
+        # ISUS_UART.Uart_Read()
+        # ISUS_UART.Chess_Pick(
+        #     rowi, columni, rowf, columnf, list_name[piece_move])
 
     def en_passant_move(self, from_square, to_square, turn):
         rowi = from_square[0]
@@ -869,11 +970,16 @@ class MainWindow(QMainWindow):
         rowf = to_square[0]
         columnf = int(to_square[1])
         if turn == chess.WHITE:
-            ISUS_UART.Chess_Drop(rowf, columnf+1, 4)
+            # ISUS_UART.Chess_Drop(rowf, columnf+1, 4)
+            ISUS_UART.Chess_Drop(rowi, columni, rowf,
+                                 columnf, rowf, columnf+1, 4, 4)
+
         else:
-            ISUS_UART.Chess_Drop(rowf, columnf-1, 4)
-        ISUS_UART.Uart_Read()
-        ISUS_UART.Chess_Pick(rowi, columni, rowf, columnf, 4)
+            # ISUS_UART.Chess_Drop(rowf, columnf-1, 4)
+            ISUS_UART.Chess_Drop(rowi, columni, rowf,
+                                 columnf, rowf, columnf-1, 4, 4)
+        # ISUS_UART.Uart_Read()
+        # ISUS_UART.Chess_Pick(rowi, columni, rowf, columnf, 4)
 
     ## ==> END ##
 
@@ -927,15 +1033,16 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    modelE4 = EfficientNetModel('.\Detection\checkpoint_hyper', (380, 380))
-    mp_hands = mp.solutions.hands
-    cap_top = MediaPipe_check_Hand()
-    get_m = variable.get_matrix_variable
 
+    modelE4_top = EfficientNetModel(
+        '.\Detection\checkpoint_top', (380, 380))
+    modelE4 = EfficientNetModel(
+        '.\Detection\checkpoint_demo', (380, 380))
     print('finish')
+
     app = QApplication(sys.argv)
-    # ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
-    # ISUS_UART.setupUart()
+    ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
+    ISUS_UART.setupUart()
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeui.ttf')
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeuib.ttf')
     window = MainWindow()

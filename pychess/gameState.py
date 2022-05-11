@@ -22,6 +22,9 @@ class GameState:
     def colour(self):
         return True if self.boardPlay.turn == chess.BLACK else False
 
+    def getFen(self):
+        return str(self.boardPlay.fen())
+
     def is_castling(self, move):
         return self.boardPlay.is_castling(move)
 

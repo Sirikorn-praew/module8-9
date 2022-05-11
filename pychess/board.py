@@ -68,7 +68,7 @@ class ChessBoard(QFrame):
         print("in process")
         print(self.gamestate.boardPlay.fen)
         print(self.gamestate.colour(), self.user_is_white)
-        if not(self.gamestate.colour()) == self.user_is_white:
+        if self.gamestate.colour() == self.user_is_white:
             self.disable_pieces()
             print("before search")
             self.search_thread.start()
@@ -124,6 +124,21 @@ class ChessBoard(QFrame):
         all_pieces = self.findChildren(QLabel)
         for piece in all_pieces:
             piece.setParent(None)  # Delete piece
+
+    def showfen(self, fen):
+        QApplication.processEvents()
+
+        self.clear()
+
+        boardForShow = chess.Board(fen)
+
+        for sqr_index in range(64):
+            piece = boardForShow.piece_at(sqr_index)
+            sqr_name = chess.SQUARE_NAMES[sqr_index]
+
+            if piece:
+                pieceInt = setting_chess.piece_string_to_int[str(piece)]
+                self.place_piece(sqr_name, pieceInt)
 
     def refresh_from_state(self):
         QApplication.processEvents()
@@ -256,35 +271,35 @@ class ChessBoard(QFrame):
         self.disable_pieces()
         self.parent.info.button_frame.disable_buttons()
 
-        if self.isus:
-            print(move.from_square)
-            print(self.gamestate.boardPlay)
-            print(self.gamestate.boardPlay.piece_at(
-                move.from_square))
-            from_square = chess.square_name(move.from_square)
-            to_square = chess.square_name(move.to_square)
-            piece = (self.gamestate.boardPlay.piece_at(
-                move.from_square)).piece_type
-            if self.gamestate.is_castling(move):
-                self.parent.castling_move(
-                    from_square, to_square)
-            elif self.gamestate.is_promotion(move):
-                self.parent.promotion_move(
-                    from_square, to_square)
-            elif self.gamestate.is_capture(move):
-                if self.gamestate.is_en_passant(move):
-                    self.parent.en_passant_move(
-                        from_square, to_square, self.gamestate.boardPlay.turn)
-                else:
-                    self.parent.capture_move(
-                        from_square, to_square, )
-            else:
-                # self.timer = QTimer()
-                # self.timer.timeout.connect(self.waitFeedback)
-                self.parent.normally_move(
-                    from_square, to_square, piece)
-                # time.sleep(50)
-                # self.timer.start(1000)
+        # if self.isus:
+        #     print(move.from_square)
+        #     print(self.gamestate.boardPlay)
+        #     print(self.gamestate.boardPlay.piece_at(
+        #         move.from_square))
+        #     from_square = chess.square_name(move.from_square)
+        #     to_square = chess.square_name(move.to_square)
+        #     piece = (self.gamestate.boardPlay.piece_at(
+        #         move.from_square)).piece_type
+        #     if self.gamestate.is_castling(move):
+        #         self.parent.castling_move(
+        #             from_square, to_square)
+        #     elif self.gamestate.is_promotion(move):
+        #         self.parent.promotion_move(
+        #             from_square, to_square)
+        #     elif self.gamestate.is_capture(move):
+        #         if self.gamestate.is_en_passant(move):
+        #             self.parent.en_passant_move(
+        #                 from_square, to_square, self.gamestate.boardPlay.turn)
+        #         else:
+        #             self.parent.capture_move(
+        #                 from_square, to_square, )
+        #     else:
+        #         # self.timer = QTimer()
+        #         # self.timer.timeout.connect(self.waitFeedback)
+        #         self.parent.normally_move(
+        #             from_square, to_square, piece)
+        #         # time.sleep(50)
+        #         # self.timer.start(1000)
 
         self.gamestate.make_move(move)
         print(move)
@@ -308,6 +323,7 @@ class ChessBoard(QFrame):
         self.gamestate.make_move(move)
         print(move)
         self.refresh_from_state()
+        self.parent.ui.status_process.setText('Agent Moved')
 
         self.parent.info.move_frame.update_moves()
 
@@ -415,32 +431,37 @@ class SearchThread(QThread):
 
     def run(self):
         self.board.disable_pieces()
+        self.board.parent.ui.status_process.setText('Searching move...')
 
         move = self.board.agent.playMove(debug=True)
 
         self.board.gamestate = self.board.agent.gamestate
 
-        # if self.board.agent_play or self.board.isus:
-        #     from_square = chess.square_name(move.from_square)
-        #     to_square = chess.square_name(move.to_square)
-        #     piece = (self.board.gamestate.boardPlay.piece_at(
-        #         move.from_square)).piece_type
-        #     if self.board.gamestate.is_castling(move):
-        #         self.board.parent.castling_move(
-        #             from_square, to_square)
-        #     elif self.board.gamestate.is_promotion(move):
-        #         self.board.parent.promotion_move(
-        #             from_square, to_square)
-        #     elif self.board.gamestate.is_capture(move):
-        #         if self.board.gamestate.is_en_passant(move):
-        #             self.board.parent.en_passant_move(
-        #                 from_square, to_square, self.board.gamestate.boardPlay.turn)
-        #         else:
-        #             self.board.parent.capture_move(
-        #                 from_square, to_square, )
-        #     else:
-        #         self.board.parent.normally_move(
-        #             from_square, to_square, piece)
+        # self.board.parent.ui.status_process.setText('Robot move...')
+
+        if self.board.agent_play or self.board.isus:
+            from_square = chess.square_name(move.from_square)
+            to_square = chess.square_name(move.to_square)
+            piece_from = (self.board.gamestate.boardPlay.piece_at(
+                move.from_square)).piece_type
+            piece_to = (self.board.gamestate.boardPlay.piece_at(
+                move.to_square)).piece_type
+            if self.board.gamestate.is_castling(move):
+                self.board.parent.castling_move(
+                    from_square, to_square)
+            elif self.board.gamestate.is_promotion(move):
+                self.board.parent.promotion_move(
+                    from_square, to_square)
+            elif self.board.gamestate.is_capture(move):
+                if self.board.gamestate.is_en_passant(move):
+                    self.board.parent.en_passant_move(
+                        from_square, to_square, self.board.gamestate.boardPlay.turn)
+                else:
+                    self.board.parent.capture_move(
+                        from_square, to_square, piece_from, piece_to)
+            else:
+                self.board.parent.normally_move(
+                    from_square, to_square, piece_from)
 
         self.move_signal.emit(move)
 
