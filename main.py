@@ -806,7 +806,7 @@ class MainWindow(QMainWindow):
             print(f"capture2 is invalid.")
 
     def capture_camera(self, status, detect, page):
-        self.ui.status_process.setText('Capturing and predicting...')
+        self.ui.status_process.setText('Capturing and predicting')
         # self.setup_camera1(self.cam1_detect_label)
         # self.setup_camera2(self.cam2_detect_label)
 
@@ -896,6 +896,7 @@ class MainWindow(QMainWindow):
 
     def normally_move(self, from_square, to_square, piece):
         rowi = from_square[0]
+        print(rowi)
         columni = int(from_square[1])
         rowf = to_square[0]
         columnf = int(to_square[1])
