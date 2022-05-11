@@ -13,18 +13,26 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 
-def kmeans_test(x):
 
-    kmeans = KMeans(n_clusters=2)
-    a = kmeans.fit(np.reshape(x, (len(x), 1)))
-    centroids = kmeans.cluster_centers_
+kmeans_model_tb = KMeans(n_clusters=2)
+def kmeans_track(x):
+    
+    a = kmeans_model_tb.fit(np.reshape(x, (len(x), 1)))
+    centroids = kmeans_model_tb.cluster_centers_
 
-    labels = kmeans.labels_
+    labels = kmeans_model_tb.labels_
+    print(x)
+    print(centroids)
+    print(labels)
+    return centroids ,labels
 
-    # print(centroids)
-    # print(labels)
-    return labels
-# kmeans_test(x)
+def predict_color_kmeans(x):
+    # centroids ,labels=kmeans_track([4,8,6,7,9,1,0,2,8,10])
+    return kmeans_model_tb.predict(np.reshape(x, (1, 1))) 
+
+def predict_color(centroid,hue):
+    if hue>centroid:return 0
+    else:return 1
 
 
 def clustering_2group(points):
@@ -63,6 +71,17 @@ def avg(img):
     # cv2.destroyAllWindows()
     return avg_hue
 
+def kmeans_test(x):
+
+    kmeans = KMeans(n_clusters=2)
+    a = kmeans.fit(np.reshape(x, (len(x), 1)))
+    centroids = kmeans.cluster_centers_
+
+    labels = kmeans.labels_
+
+    print(centroids)
+    # print(labels)
+    return labels
 
 def kmeans_classify(list_of_image):
     # all_image, filename_all = load_all_images(file)
@@ -82,7 +101,24 @@ def kmeans_classify(list_of_image):
         list_of_avg_hue.append(int(avg(cropped_image)))
     # print('kmean')
     return kmeans_test(list_of_avg_hue)
-
+def kmeans_classify_track(list_of_image):
+    # all_image, filename_all = load_all_images(file)
+    list_of_avg_hue = []
+    for image in range(len(list_of_image)):
+        # draw_image = list_of_image[image].copy()
+        resized = cv2.resize(list_of_image[image], (85, 85),
+                             interpolation=cv2.INTER_AREA)
+        length = 20
+        h1 = length
+        h2 = resized.shape[1]-length
+        w1 = length
+        w2 = resized.shape[0]-length
+        contrast = cv2.convertScaleAbs(resized, alpha=1, beta=0)
+        cropped_image = contrast[h1:h2, w1:w2]
+        # print(image)
+        list_of_avg_hue.append(int(avg(cropped_image)))
+    # print('kmean')
+    return kmeans_track(list_of_avg_hue)
 
 def find_threshold_color_chess_piece(list_of_image):
     # all_image, filename_all = load_all_images(file)
