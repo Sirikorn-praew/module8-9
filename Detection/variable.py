@@ -29,7 +29,7 @@ class to_trackback():
         self.move_change =[]
         self.centroid=None
 
-        self.color_threshold='H'
+        self.color_threshold=1 #สีค่าน้อยจะได้จะ 1 
 
         #Old
         self.fen_before='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'

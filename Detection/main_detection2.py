@@ -661,30 +661,30 @@ def main_chess_piece(frame_side, frame_top, new_detect, model):
 #     except:
 #         print('sad too')
 #         return None
-def convert_color(list_of_color):
-    if tb_top.color_threshold == 'H':
-        for i in range(len(list_of_color)):
-            if list_of_color[i] == 0:
-                list_of_color[i] = 1
-            elif list_of_color[i] == 1:
-                list_of_color[i] = 0
+# def convert_color(list_of_color):
+#     if tb_top.color_threshold == 'H':
+#         for i in range(len(list_of_color)):
+#             if list_of_color[i] == 0:
+#                 list_of_color[i] = 1
+#             elif list_of_color[i] == 1:
+#                 list_of_color[i] = 0
 
 
-def define_first_board_color():
-    print(len(top_data.list_of_image_new))
-    not_empty_image = []
-    # black=[]
-    # white=[]
-    for image in range(16):
-        # print(image)
-        # black.append(color_classify.avg(top_data.list_of_image_new[image]))
-        not_empty_image.append(top_data.list_of_image_new[image])
-    for image in range(48, 64):
-        # print(image)
-        # white.append(color_classify.avg(top_data.list_of_image_new[image]))
-        not_empty_image.append(top_data.list_of_image_new[image])
-    tb_top.centroid, labels = color_classify.kmeans_classify_track(
-        not_empty_image)
+# def define_first_board_color():
+#     print(len(top_data.list_of_image_new))
+#     not_empty_image = []
+#     # black=[]
+#     # white=[]
+#     for image in range(16):
+#         # print(image)
+#         # black.append(color_classify.avg(top_data.list_of_image_new[image]))
+#         not_empty_image.append(top_data.list_of_image_new[image])
+#     for image in range(48, 64):
+#         # print(image)
+#         # white.append(color_classify.avg(top_data.list_of_image_new[image]))
+#         not_empty_image.append(top_data.list_of_image_new[image])
+#     tb_top.centroid, labels = color_classify.kmeans_classify_track(
+#         not_empty_image)
     # print(labels)
     # if labels[0] == 0:
     #     tb_top.color_threshold = 'H'  # Low is Black
@@ -730,12 +730,21 @@ def predict_color_board(index_not_empty):  # classify_color
     for index in index_not_empty:
         list_of_color[index] = list_predict[count]
         count += 1
-    if list_predict[0] == 0:
+    if tb_top.count == 0:
+        if tb_top.board_list_old[0] != tb_top.board_list_new[0]: #1,0
+            tb_top.color_threshold=0
+            for i in range(len(list_of_color)):
+                if list_of_color[i] == 0:
+                    list_of_color[i] = 1
+                elif list_of_color[i] == 1:
+                    list_of_color[i] = 0
+        tb_top.count += 1
+    elif tb_top.color_threshold==0:
         for i in range(len(list_of_color)):
-            if list_of_color[i] == 0:
-                list_of_color[i] = 1
-            elif list_of_color[i] == 1:
-                list_of_color[i] = 0
+                if list_of_color[i] == 0:
+                    list_of_color[i] = 1
+                elif list_of_color[i] == 1:
+                    list_of_color[i] = 0
 
     tb_top.board_color_new = copy.deepcopy(list_of_color)
 
@@ -784,6 +793,7 @@ def get_fen_pieces(board):
 
 # new_detect==1 is use detection board #color 1 is detect black
 def use_trackback(frame_top, new_detect, fen_before, color_choose, model):
+
     print('start', tb_top.old_pred_empty)
     tb_top.board_list_old = list(
         str(chess.Board(fen_before)).replace(' ', '').replace('\n', ''))
@@ -814,7 +824,7 @@ def use_trackback(frame_top, new_detect, fen_before, color_choose, model):
     top_data.clear_image = copy.deepcopy(frame_top)
 
     tb_top.new_pred_empty = crop_and_predict_empty(model)
-    save_plot_point_image_top()
+    # save_plot_point_image_top()
 
     print('empty')
     print(np.reshape(tb_top.new_pred_empty, (8, 8)))
@@ -882,8 +892,8 @@ def use_trackback(frame_top, new_detect, fen_before, color_choose, model):
 
         elif color_change[0] == [0, 1, -1] and color_change[3] == [4, 1, -1]:
             tb_top.board_list_new[0] = '.'
-            tb_top.board_list_new[2] = 'k'
-            tb_top.board_list_new[3] = 'r'
+            tb_top.board_list_new[1] = 'k'
+            tb_top.board_list_new[2] = 'r'
             tb_top.board_list_new[4] = '.'
         else:
             return None
