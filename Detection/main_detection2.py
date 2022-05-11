@@ -882,8 +882,8 @@ def use_trackback(frame_top, new_detect, fen_before, color_choose, model):
 
         elif color_change[0] == [0, 1, -1] and color_change[3] == [4, 1, -1]:
             tb_top.board_list_new[0] = '.'
-            tb_top.board_list_new[2] = 'k'
-            tb_top.board_list_new[3] = 'r'
+            tb_top.board_list_new[1] = 'k'
+            tb_top.board_list_new[2] = 'r'
             tb_top.board_list_new[4] = '.'
         else:
             return None
