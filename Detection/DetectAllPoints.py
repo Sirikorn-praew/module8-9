@@ -11,8 +11,8 @@ import numpy as np
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
-import Detection.DetectionFunctions as df
-
+# import Detection.DetectionFunctions as df
+import DetectionFunctions as df
 np.set_printoptions(suppress=True, linewidth=200)  # Better printing of arrays
 plt.rcParams['image.cmap'] = 'jet'  # Default colormap is jet
 
