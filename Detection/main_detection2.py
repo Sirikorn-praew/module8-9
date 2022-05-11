@@ -731,20 +731,20 @@ def predict_color_board(index_not_empty):  # classify_color
         list_of_color[index] = list_predict[count]
         count += 1
     if tb_top.count == 0:
-        if tb_top.board_list_old[0] != tb_top.board_list_new[0]: #1,0
-            tb_top.color_threshold=0
+        if tb_top.board_list_old[0] != tb_top.board_list_new[0]:  # 1,0
+            tb_top.color_threshold = 0
             for i in range(len(list_of_color)):
                 if list_of_color[i] == 0:
                     list_of_color[i] = 1
                 elif list_of_color[i] == 1:
                     list_of_color[i] = 0
         tb_top.count += 1
-    elif tb_top.color_threshold==0:
+    elif tb_top.color_threshold == 0:
         for i in range(len(list_of_color)):
-                if list_of_color[i] == 0:
-                    list_of_color[i] = 1
-                elif list_of_color[i] == 1:
-                    list_of_color[i] = 0
+            if list_of_color[i] == 0:
+                list_of_color[i] = 1
+            elif list_of_color[i] == 1:
+                list_of_color[i] = 0
 
     tb_top.board_color_new = copy.deepcopy(list_of_color)
 
