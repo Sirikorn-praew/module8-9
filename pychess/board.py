@@ -1,9 +1,10 @@
 import sys
 import copy
 import platform
+import time
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime,
-                            QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent, QThread, Signal, QRegExp, QEventLoop)
+                            QMetaObject, QObject, QPoint, QRect, QSize, QTimer, QUrl, Qt, QEvent, QThread, Signal, QRegExp, QEventLoop)
 from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase,
                            QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
@@ -12,7 +13,9 @@ import chess
 import setting_chess
 from pychess.gameState import GameState
 from pychess.chessAgent import ChessAgent
-# from Detection import main_detection
+
+# # COMUNICATION
+# from Comunication import Move_Comunication_Functions
 
 # SQR_SIZE = 720/8
 
@@ -39,6 +42,7 @@ class ChessBoard(QFrame):
         self.agent = ChessAgent(self.gamestate, 5)
         self.search_thread = SearchThread(self)
         self.agent_play = False
+        self.isus = False
         self.user_is_white = True
         self.autosave = True
         self.saved = True
@@ -240,11 +244,50 @@ class ChessBoard(QFrame):
         if self.gamestate.is_castling(move):
             self.do_rook_castle(dst_index, is_undo)
 
+    # def waitFeedback(self):
+    #     self.parent.readFeedback()
+    #     # print(self.parent.getStatus())
+    #     if self.parent.getStatus() == 99:
+    #         self.timer.stop()
+    #         self.timer.deleteLater()
+    #         self.parent.resetStatus()
+
     def player_move(self, move):
         self.disable_pieces()
         self.parent.info.button_frame.disable_buttons()
 
+        if self.isus:
+            print(move.from_square)
+            print(self.gamestate.boardPlay)
+            print(self.gamestate.boardPlay.piece_at(
+                move.from_square))
+            from_square = chess.square_name(move.from_square)
+            to_square = chess.square_name(move.to_square)
+            piece = (self.gamestate.boardPlay.piece_at(
+                move.from_square)).piece_type
+            if self.gamestate.is_castling(move):
+                self.parent.castling_move(
+                    from_square, to_square)
+            elif self.gamestate.is_promotion(move):
+                self.parent.promotion_move(
+                    from_square, to_square)
+            elif self.gamestate.is_capture(move):
+                if self.gamestate.is_en_passant(move):
+                    self.parent.en_passant_move(
+                        from_square, to_square, self.gamestate.boardPlay.turn)
+                else:
+                    self.parent.capture_move(
+                        from_square, to_square, )
+            else:
+                # self.timer = QTimer()
+                # self.timer.timeout.connect(self.waitFeedback)
+                self.parent.normally_move(
+                    from_square, to_square, piece)
+                # time.sleep(50)
+                # self.timer.start(1000)
+
         self.gamestate.make_move(move)
+        print(move)
         self.refresh_from_state()
 
         # After a move has been made, the player can no longer redo moves that were undone previously
@@ -263,6 +306,7 @@ class ChessBoard(QFrame):
         self.move_glide(move, False)
 
         self.gamestate.make_move(move)
+        print(move)
         self.refresh_from_state()
 
         self.parent.info.move_frame.update_moves()
@@ -374,21 +418,29 @@ class SearchThread(QThread):
 
         move = self.board.agent.playMove(debug=True)
 
-        # if self.board.difficulty == 1:
-        #     move = self.board.search.iter_search(max_depth=1)  # Depth 1 search
-        # elif self.board.difficulty == 2:
-        #     move = self.board.search.iter_search(max_depth=2)  # Depth 2 search
-        # elif self.board.difficulty == 3:
-        #     move = self.board.search.iter_search(
-        #         time_limit=0.1)  # 0.1 second search
-        # elif self.board.difficulty == 4:
-        #     move = self.board.search.iter_search(
-        #         time_limit=1)  # 1 second search
-        # elif self.board.difficulty == 5:
-        #     move = self.board.search.iter_search(
-        #         time_limit=5)  # 5 second search
-
         self.board.gamestate = self.board.agent.gamestate
+
+        # if self.board.agent_play or self.board.isus:
+        #     from_square = chess.square_name(move.from_square)
+        #     to_square = chess.square_name(move.to_square)
+        #     piece = (self.board.gamestate.boardPlay.piece_at(
+        #         move.from_square)).piece_type
+        #     if self.board.gamestate.is_castling(move):
+        #         self.board.parent.castling_move(
+        #             from_square, to_square)
+        #     elif self.board.gamestate.is_promotion(move):
+        #         self.board.parent.promotion_move(
+        #             from_square, to_square)
+        #     elif self.board.gamestate.is_capture(move):
+        #         if self.board.gamestate.is_en_passant(move):
+        #             self.board.parent.en_passant_move(
+        #                 from_square, to_square, self.board.gamestate.boardPlay.turn)
+        #         else:
+        #             self.board.parent.capture_move(
+        #                 from_square, to_square, )
+        #     else:
+        #         self.board.parent.normally_move(
+        #             from_square, to_square, piece)
 
         self.move_signal.emit(move)
 
@@ -478,14 +530,10 @@ class PieceLabel(QLabel):
                     # Identify legal moves
                     sqr_index = chess.parse_square(
                         self.src_square.objectName())
-                    # sqr_index = common.san_to_index[self.src_square.objectName(
-                    # )]
-                    self.legal_dst_squares = self.board.moves_from_square(
-                        sqr_index)
 
                     # Only need destination square for each move
-                    # self.legal_dst_squares = list(
-                    #     map(lambda move: common.index_to_san[move & 0x3F], self.legal_moves))
+                    self.legal_dst_squares = self.board.moves_from_square(
+                        sqr_index)
 
                     # Highlight origin and destination squares
                     self.board.highlight(sqr_index)
@@ -564,12 +612,6 @@ class PieceLabel(QLabel):
                         if piece_label.is_white != self.is_white:
                             piece_label.setParent(None)
 
-                    # for move in self.legal_moves:
-                    #     if move & 0xFFF == from_to:
-                    #         move_made = move
-
-                #     move_type = move_made & (0x3 << 14)
-                    # move_made = chess.Move.from_uci(from_to)
                     move_made = self.board.gamestate.boardPlay.find_move(
                         src_sqr_index, dst_sqr_index)
                     # print(self.board.gamestate.boardPlay)

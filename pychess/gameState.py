@@ -25,6 +25,15 @@ class GameState:
     def is_castling(self, move):
         return self.boardPlay.is_castling(move)
 
+    def is_promotion(self, move):
+        return True if move.promotion is not None else False
+
+    def is_capture(self, move):
+        return self.boardPlay.is_capture(move)
+
+    def is_en_passant(self, move):
+        return self.boardPlay.is_en_passant(move)
+
     def is_game_over(self):
         return self.boardPlay.is_game_over()
 

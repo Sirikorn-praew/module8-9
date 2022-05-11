@@ -804,7 +804,7 @@ class Ui_MainWindow(object):
         self.chessBoard_detect_frame_2.setFrameShadow(QFrame.Raised)
         self.verticalLayoutWidget_7 = QWidget(self.chessBoard_detect_frame_2)
         self.verticalLayoutWidget_7.setObjectName(u"verticalLayoutWidget_7")
-        self.verticalLayoutWidget_7.setGeometry(QRect(0, 0, 531, 351))
+        self.verticalLayoutWidget_7.setGeometry(QRect(0, 0, 531, 331))
         self.camera1_process_layout = QVBoxLayout(self.verticalLayoutWidget_7)
         self.camera1_process_layout.setObjectName(u"camera1_process_layout")
         self.camera1_process_layout.setContentsMargins(0, 0, 0, 0)
@@ -812,7 +812,7 @@ class Ui_MainWindow(object):
             self.chessBoard_detect_frame_2)
         self.horizontalLayoutWidget_10.setObjectName(
             u"horizontalLayoutWidget_10")
-        self.horizontalLayoutWidget_10.setGeometry(QRect(60, 350, 371, 371))
+        self.horizontalLayoutWidget_10.setGeometry(QRect(60, 330, 401, 401))
         self.chessBoard_process_layout = QHBoxLayout(
             self.horizontalLayoutWidget_10)
         self.chessBoard_process_layout.setObjectName(
@@ -822,7 +822,7 @@ class Ui_MainWindow(object):
             self.chessBoard_detect_frame_2)
         self.horizontalLayoutWidget_11.setObjectName(
             u"horizontalLayoutWidget_11")
-        self.horizontalLayoutWidget_11.setGeometry(QRect(60, 720, 371, 31))
+        self.horizontalLayoutWidget_11.setGeometry(QRect(60, 730, 401, 31))
         self.horizontalLayout_23 = QHBoxLayout(self.horizontalLayoutWidget_11)
         self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
         self.horizontalLayout_23.setContentsMargins(0, 0, 0, 0)
@@ -876,7 +876,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayoutWidget_8 = QWidget(self.chessBoard_detect_frame_2)
         self.verticalLayoutWidget_8.setObjectName(u"verticalLayoutWidget_8")
-        self.verticalLayoutWidget_8.setGeometry(QRect(30, 350, 31, 371))
+        self.verticalLayoutWidget_8.setGeometry(QRect(30, 330, 31, 401))
         self.verticalLayout_26 = QVBoxLayout(self.verticalLayoutWidget_8)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.verticalLayout_26.setContentsMargins(0, 0, 0, 0)
@@ -941,15 +941,15 @@ class Ui_MainWindow(object):
         self.frame_19.setFrameShadow(QFrame.Raised)
         self.frame_20 = QFrame(self.frame_19)
         self.frame_20.setObjectName(u"frame_20")
-        self.frame_20.setGeometry(QRect(5, 360, 521, 391))
+        self.frame_20.setGeometry(QRect(5, 340, 521, 411))
         self.frame_20.setStyleSheet(u"background-color: rgb(39, 44, 54);\n"
                                     "border-radius: 5px;")
         self.frame_20.setFrameShape(QFrame.StyledPanel)
         self.frame_20.setFrameShadow(QFrame.Raised)
         self.frame_title_wid_4 = QFrame(self.frame_20)
         self.frame_title_wid_4.setObjectName(u"frame_title_wid_4")
-        self.frame_title_wid_4.setGeometry(QRect(0, 0, 521, 35))
-        self.frame_title_wid_4.setMaximumSize(QSize(16777215, 35))
+        self.frame_title_wid_4.setGeometry(QRect(0, 0, 521, 40))
+        self.frame_title_wid_4.setMaximumSize(QSize(16777215, 40))
         self.frame_title_wid_4.setStyleSheet(
             u"background-color: rgb(30, 35, 40);")
         self.frame_title_wid_4.setFrameShape(QFrame.StyledPanel)
@@ -964,60 +964,66 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_27.addWidget(self.labelBoxBlenderInstalation_4)
 
-        self.btn_send_grip_close_process = QPushButton(self.frame_20)
-        self.btn_send_grip_close_process.setObjectName(
-            u"btn_send_grip_close_process")
-        self.btn_send_grip_close_process.setGeometry(QRect(180, 340, 160, 35))
+        self.btn_send_redo_process = QPushButton(self.frame_20)
+        self.btn_send_redo_process.setObjectName(u"btn_send_redo_process")
+        self.btn_send_redo_process.setGeometry(QRect(180, 360, 160, 35))
         sizePolicy5.setHeightForWidth(
-            self.btn_send_grip_close_process.sizePolicy().hasHeightForWidth())
-        self.btn_send_grip_close_process.setSizePolicy(sizePolicy5)
-        self.btn_send_grip_close_process.setMinimumSize(QSize(100, 20))
-        self.btn_send_grip_close_process.setMaximumSize(QSize(300, 50))
+            self.btn_send_redo_process.sizePolicy().hasHeightForWidth())
+        self.btn_send_redo_process.setSizePolicy(sizePolicy5)
+        self.btn_send_redo_process.setMinimumSize(QSize(100, 20))
+        self.btn_send_redo_process.setMaximumSize(QSize(300, 50))
         font10 = QFont()
         font10.setPointSize(9)
-        self.btn_send_grip_close_process.setFont(font10)
-        self.btn_send_grip_close_process.setLayoutDirection(Qt.LeftToRight)
-        self.btn_send_grip_close_process.setStyleSheet(u"QPushButton {\n"
-                                                       "	border: 2px solid rgb(199, 84, 80);\n"
-                                                       "	border-radius: 5px;	\n"
-                                                       "	background-color: rgb(199, 84, 80);\n"
-                                                       "}\n"
-                                                       "QPushButton:hover {\n"
-                                                       "    background-color: rgb(240, 84, 80);\n"
-                                                       "	border: 2px solid rgb(240, 84, 80);\n"
-                                                       "}\n"
-                                                       "QPushButton:pressed {	\n"
-                                                       "	background-color: rgb(35, 40, 49);\n"
-                                                       "	border: 2px solid rgb(43, 50, 61);\n"
-                                                       "}")
-        self.btn_send_grip_open_process = QPushButton(self.frame_20)
-        self.btn_send_grip_open_process.setObjectName(
-            u"btn_send_grip_open_process")
-        self.btn_send_grip_open_process.setGeometry(QRect(10, 340, 160, 35))
+        self.btn_send_redo_process.setFont(font10)
+        self.btn_send_redo_process.setLayoutDirection(Qt.LeftToRight)
+        self.btn_send_redo_process.setStyleSheet(u"QPushButton {\n"
+                                                 "	border: 2px solid rgb(199, 84, 80);\n"
+                                                 "	border-radius: 5px;	\n"
+                                                 "	background-color: rgb(199, 84, 80);\n"
+                                                 "}\n"
+                                                 "QPushButton:hover {\n"
+                                                 "    background-color: rgb(240, 84, 80);\n"
+                                                 "	border: 2px solid rgb(240, 84, 80);\n"
+                                                 "}\n"
+                                                 "QPushButton:pressed {	\n"
+                                                 "	background-color: rgb(35, 40, 49);\n"
+                                                 "	border: 2px solid rgb(43, 50, 61);\n"
+                                                 "}")
+        icon3 = QIcon()
+        icon3.addFile(u"icons/chessMenu/arrow-right.png",
+                      QSize(), QIcon.Normal, QIcon.Off)
+        self.btn_send_redo_process.setIcon(icon3)
+        self.btn_send_undo_process = QPushButton(self.frame_20)
+        self.btn_send_undo_process.setObjectName(u"btn_send_undo_process")
+        self.btn_send_undo_process.setGeometry(QRect(10, 360, 160, 35))
         sizePolicy5.setHeightForWidth(
-            self.btn_send_grip_open_process.sizePolicy().hasHeightForWidth())
-        self.btn_send_grip_open_process.setSizePolicy(sizePolicy5)
-        self.btn_send_grip_open_process.setMinimumSize(QSize(100, 20))
-        self.btn_send_grip_open_process.setMaximumSize(QSize(300, 50))
-        self.btn_send_grip_open_process.setFont(font10)
-        self.btn_send_grip_open_process.setLayoutDirection(Qt.LeftToRight)
-        self.btn_send_grip_open_process.setStyleSheet(u"QPushButton {\n"
-                                                      "	border: 2px solid rgb(52, 59, 72);\n"
-                                                      "	border-radius: 5px;	\n"
-                                                      "	background-color: rgb(52, 59, 72);\n"
-                                                      "}\n"
-                                                      "QPushButton:hover {\n"
-                                                      "	background-color: rgb(57, 65, 80);\n"
-                                                      "	border: 2px solid rgb(61, 70, 86);\n"
-                                                      "}\n"
-                                                      "QPushButton:pressed {	\n"
-                                                      "	background-color: rgb(35, 40, 49);\n"
-                                                      "	border: 2px solid rgb(43, 50, 61);\n"
-                                                      "}")
+            self.btn_send_undo_process.sizePolicy().hasHeightForWidth())
+        self.btn_send_undo_process.setSizePolicy(sizePolicy5)
+        self.btn_send_undo_process.setMinimumSize(QSize(100, 20))
+        self.btn_send_undo_process.setMaximumSize(QSize(300, 50))
+        self.btn_send_undo_process.setFont(font10)
+        self.btn_send_undo_process.setLayoutDirection(Qt.LeftToRight)
+        self.btn_send_undo_process.setStyleSheet(u"QPushButton {\n"
+                                                 "	border: 2px solid rgb(52, 59, 72);\n"
+                                                 "	border-radius: 5px;	\n"
+                                                 "	background-color: rgb(52, 59, 72);\n"
+                                                 "}\n"
+                                                 "QPushButton:hover {\n"
+                                                 "	background-color: rgb(57, 65, 80);\n"
+                                                 "	border: 2px solid rgb(61, 70, 86);\n"
+                                                 "}\n"
+                                                 "QPushButton:pressed {	\n"
+                                                 "	background-color: rgb(35, 40, 49);\n"
+                                                 "	border: 2px solid rgb(43, 50, 61);\n"
+                                                 "}")
+        icon4 = QIcon()
+        icon4.addFile(u"icons/chessMenu/arrow-left.png",
+                      QSize(), QIcon.Normal, QIcon.Off)
+        self.btn_send_undo_process.setIcon(icon4)
         self.btn_send_startstop_process = QPushButton(self.frame_20)
         self.btn_send_startstop_process.setObjectName(
             u"btn_send_startstop_process")
-        self.btn_send_startstop_process.setGeometry(QRect(10, 240, 160, 35))
+        self.btn_send_startstop_process.setGeometry(QRect(10, 260, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_send_startstop_process.sizePolicy().hasHeightForWidth())
         self.btn_send_startstop_process.setSizePolicy(sizePolicy5)
@@ -1041,7 +1047,7 @@ class Ui_MainWindow(object):
         self.btn_send_chess_home_process = QPushButton(self.frame_20)
         self.btn_send_chess_home_process.setObjectName(
             u"btn_send_chess_home_process")
-        self.btn_send_chess_home_process.setGeometry(QRect(10, 290, 160, 35))
+        self.btn_send_chess_home_process.setGeometry(QRect(10, 310, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_send_chess_home_process.sizePolicy().hasHeightForWidth())
         self.btn_send_chess_home_process.setSizePolicy(sizePolicy5)
@@ -1064,7 +1070,7 @@ class Ui_MainWindow(object):
                                                        "}")
         self.btn_send_home_process = QPushButton(self.frame_20)
         self.btn_send_home_process.setObjectName(u"btn_send_home_process")
-        self.btn_send_home_process.setGeometry(QRect(180, 240, 160, 35))
+        self.btn_send_home_process.setGeometry(QRect(180, 260, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_send_home_process.sizePolicy().hasHeightForWidth())
         self.btn_send_home_process.setSizePolicy(sizePolicy5)
@@ -1088,7 +1094,7 @@ class Ui_MainWindow(object):
         self.btn_send_zero_field_process = QPushButton(self.frame_20)
         self.btn_send_zero_field_process.setObjectName(
             u"btn_send_zero_field_process")
-        self.btn_send_zero_field_process.setGeometry(QRect(180, 290, 160, 35))
+        self.btn_send_zero_field_process.setGeometry(QRect(180, 310, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_send_zero_field_process.sizePolicy().hasHeightForWidth())
         self.btn_send_zero_field_process.setSizePolicy(sizePolicy5)
@@ -1111,7 +1117,7 @@ class Ui_MainWindow(object):
                                                        "}")
         self.btn_open_camera_process = QPushButton(self.frame_20)
         self.btn_open_camera_process.setObjectName(u"btn_open_camera_process")
-        self.btn_open_camera_process.setGeometry(QRect(350, 240, 160, 35))
+        self.btn_open_camera_process.setGeometry(QRect(350, 260, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_open_camera_process.sizePolicy().hasHeightForWidth())
         self.btn_open_camera_process.setSizePolicy(sizePolicy5)
@@ -1135,7 +1141,7 @@ class Ui_MainWindow(object):
         self.btn_close_camera_process = QPushButton(self.frame_20)
         self.btn_close_camera_process.setObjectName(
             u"btn_close_camera_process")
-        self.btn_close_camera_process.setGeometry(QRect(350, 290, 160, 35))
+        self.btn_close_camera_process.setGeometry(QRect(350, 310, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_close_camera_process.sizePolicy().hasHeightForWidth())
         self.btn_close_camera_process.setSizePolicy(sizePolicy5)
@@ -1158,7 +1164,7 @@ class Ui_MainWindow(object):
                                                     "}")
         self.status_process = QLineEdit(self.frame_20)
         self.status_process.setObjectName(u"status_process")
-        self.status_process.setGeometry(QRect(20, 70, 200, 35))
+        self.status_process.setGeometry(QRect(20, 80, 200, 35))
         self.status_process.setMinimumSize(QSize(0, 20))
         font11 = QFont()
         font11.setPointSize(10)
@@ -1183,12 +1189,12 @@ class Ui_MainWindow(object):
         self.labelBoxBlenderInstalation_5 = QLabel(self.frame_20)
         self.labelBoxBlenderInstalation_5.setObjectName(
             u"labelBoxBlenderInstalation_5")
-        self.labelBoxBlenderInstalation_5.setGeometry(QRect(20, 40, 100, 30))
+        self.labelBoxBlenderInstalation_5.setGeometry(QRect(20, 50, 100, 30))
         self.labelBoxBlenderInstalation_5.setFont(font1)
         self.labelBoxBlenderInstalation_5.setStyleSheet(u"")
         self.btn_capture_process = QPushButton(self.frame_20)
         self.btn_capture_process.setObjectName(u"btn_capture_process")
-        self.btn_capture_process.setGeometry(QRect(350, 340, 160, 35))
+        self.btn_capture_process.setGeometry(QRect(350, 360, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_capture_process.sizePolicy().hasHeightForWidth())
         self.btn_capture_process.setSizePolicy(sizePolicy5)
@@ -1212,12 +1218,12 @@ class Ui_MainWindow(object):
         self.labelBoxBlenderInstalation_9 = QLabel(self.frame_20)
         self.labelBoxBlenderInstalation_9.setObjectName(
             u"labelBoxBlenderInstalation_9")
-        self.labelBoxBlenderInstalation_9.setGeometry(QRect(20, 110, 100, 30))
+        self.labelBoxBlenderInstalation_9.setGeometry(QRect(20, 120, 100, 30))
         self.labelBoxBlenderInstalation_9.setFont(font1)
         self.labelBoxBlenderInstalation_9.setStyleSheet(u"")
         self.status_fen_process = QLineEdit(self.frame_20)
         self.status_fen_process.setObjectName(u"status_fen_process")
-        self.status_fen_process.setGeometry(QRect(20, 140, 450, 40))
+        self.status_fen_process.setGeometry(QRect(20, 150, 450, 40))
         self.status_fen_process.setMinimumSize(QSize(0, 20))
         self.status_fen_process.setFont(font11)
         self.status_fen_process.setLayoutDirection(Qt.LeftToRight)
@@ -1239,7 +1245,7 @@ class Ui_MainWindow(object):
         self.status_fen_process.setReadOnly(True)
         self.status_turn_process = QLineEdit(self.frame_20)
         self.status_turn_process.setObjectName(u"status_turn_process")
-        self.status_turn_process.setGeometry(QRect(230, 70, 131, 35))
+        self.status_turn_process.setGeometry(QRect(230, 80, 131, 35))
         self.status_turn_process.setMinimumSize(QSize(0, 20))
         self.status_turn_process.setFont(font11)
         self.status_turn_process.setLayoutDirection(Qt.LeftToRight)
@@ -1262,12 +1268,12 @@ class Ui_MainWindow(object):
         self.labelBoxBlenderInstalation_10 = QLabel(self.frame_20)
         self.labelBoxBlenderInstalation_10.setObjectName(
             u"labelBoxBlenderInstalation_10")
-        self.labelBoxBlenderInstalation_10.setGeometry(QRect(230, 40, 100, 30))
+        self.labelBoxBlenderInstalation_10.setGeometry(QRect(230, 50, 100, 30))
         self.labelBoxBlenderInstalation_10.setFont(font1)
         self.labelBoxBlenderInstalation_10.setStyleSheet(u"")
         self.btn_reset_process = QPushButton(self.frame_20)
         self.btn_reset_process.setObjectName(u"btn_reset_process")
-        self.btn_reset_process.setGeometry(QRect(180, 190, 120, 30))
+        self.btn_reset_process.setGeometry(QRect(180, 210, 120, 30))
         sizePolicy5.setHeightForWidth(
             self.btn_reset_process.sizePolicy().hasHeightForWidth())
         self.btn_reset_process.setSizePolicy(sizePolicy5)
@@ -1288,15 +1294,19 @@ class Ui_MainWindow(object):
                                              "	background-color: rgb(35, 40, 49);\n"
                                              "	border: 2px solid rgb(43, 50, 61);\n"
                                              "}")
+        icon5 = QIcon()
+        icon5.addFile(u"icons/chessMenu/reset.png",
+                      QSize(), QIcon.Normal, QIcon.Off)
+        self.btn_reset_process.setIcon(icon5)
         self.labelBoxBlenderInstalation_11 = QLabel(self.frame_20)
         self.labelBoxBlenderInstalation_11.setObjectName(
             u"labelBoxBlenderInstalation_11")
-        self.labelBoxBlenderInstalation_11.setGeometry(QRect(370, 40, 120, 30))
+        self.labelBoxBlenderInstalation_11.setGeometry(QRect(370, 50, 120, 30))
         self.labelBoxBlenderInstalation_11.setFont(font1)
         self.labelBoxBlenderInstalation_11.setStyleSheet(u"")
         self.status_time_process = QLineEdit(self.frame_20)
         self.status_time_process.setObjectName(u"status_time_process")
-        self.status_time_process.setGeometry(QRect(370, 70, 131, 35))
+        self.status_time_process.setGeometry(QRect(370, 80, 131, 35))
         self.status_time_process.setMinimumSize(QSize(0, 20))
         self.status_time_process.setFont(font11)
         self.status_time_process.setLayoutDirection(Qt.LeftToRight)
@@ -1318,7 +1328,7 @@ class Ui_MainWindow(object):
         self.status_time_process.setReadOnly(True)
         self.btn_start_process = QPushButton(self.frame_20)
         self.btn_start_process.setObjectName(u"btn_start_process")
-        self.btn_start_process.setGeometry(QRect(10, 190, 160, 35))
+        self.btn_start_process.setGeometry(QRect(10, 210, 160, 35))
         sizePolicy5.setHeightForWidth(
             self.btn_start_process.sizePolicy().hasHeightForWidth())
         self.btn_start_process.setSizePolicy(sizePolicy5)
@@ -1340,8 +1350,8 @@ class Ui_MainWindow(object):
                                              "	border: 2px solid rgb(43, 50, 61);\n"
                                              "}")
         self.frame_title_wid_4.raise_()
-        self.btn_send_grip_close_process.raise_()
-        self.btn_send_grip_open_process.raise_()
+        self.btn_send_redo_process.raise_()
+        self.btn_send_undo_process.raise_()
         self.btn_send_startstop_process.raise_()
         self.btn_send_chess_home_process.raise_()
         self.btn_send_home_process.raise_()
@@ -1361,7 +1371,7 @@ class Ui_MainWindow(object):
         self.btn_start_process.raise_()
         self.verticalLayoutWidget_9 = QWidget(self.frame_19)
         self.verticalLayoutWidget_9.setObjectName(u"verticalLayoutWidget_9")
-        self.verticalLayoutWidget_9.setGeometry(QRect(0, 0, 531, 351))
+        self.verticalLayoutWidget_9.setGeometry(QRect(0, 0, 531, 331))
         self.camera2_process_layout = QVBoxLayout(self.verticalLayoutWidget_9)
         self.camera2_process_layout.setObjectName(u"camera2_process_layout")
         self.camera2_process_layout.setContentsMargins(0, 0, 0, 0)
@@ -1424,10 +1434,10 @@ class Ui_MainWindow(object):
                                                   "	background-color: rgb(35, 40, 49);\n"
                                                   "	border: 2px solid rgb(43, 50, 61);\n"
                                                   "}")
-        icon3 = QIcon()
-        icon3.addFile(u"icons/chessMenu/chess-white.png",
+        icon6 = QIcon()
+        icon6.addFile(u"icons/chessMenu/chess-white.png",
                       QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_play_white_process.setIcon(icon3)
+        self.btn_play_white_process.setIcon(icon6)
         self.btn_play_white_process.setIconSize(QSize(32, 32))
 
         self.horizontalLayout_21.addWidget(self.btn_play_white_process)
@@ -1454,10 +1464,10 @@ class Ui_MainWindow(object):
                                                   "	background-color: rgb(35, 40, 49);\n"
                                                   "	border: 2px solid rgb(43, 50, 61);\n"
                                                   "}")
-        icon4 = QIcon()
-        icon4.addFile(u"icons/chessMenu/chess-black.png",
+        icon7 = QIcon()
+        icon7.addFile(u"icons/chessMenu/chess-black.png",
                       QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_play_black_process.setIcon(icon4)
+        self.btn_play_black_process.setIcon(icon7)
         self.btn_play_black_process.setIconSize(QSize(32, 32))
 
         self.horizontalLayout_21.addWidget(self.btn_play_black_process)
@@ -1525,30 +1535,34 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_23.addWidget(self.frame_16)
 
-        self.btn_load_game = QPushButton(self.frame_15)
-        self.btn_load_game.setObjectName(u"btn_load_game")
+        self.btn_new_game_isus = QPushButton(self.frame_15)
+        self.btn_new_game_isus.setObjectName(u"btn_new_game_isus")
         sizePolicy5.setHeightForWidth(
-            self.btn_load_game.sizePolicy().hasHeightForWidth())
-        self.btn_load_game.setSizePolicy(sizePolicy5)
-        self.btn_load_game.setMinimumSize(QSize(240, 60))
-        self.btn_load_game.setMaximumSize(QSize(300, 60))
-        self.btn_load_game.setFont(font7)
-        self.btn_load_game.setLayoutDirection(Qt.LeftToRight)
-        self.btn_load_game.setStyleSheet(u"QPushButton {\n"
-                                         "	border: 2px solid rgb(52, 59, 72);\n"
-                                         "	border-radius: 5px;	\n"
-                                         "	background-color: rgb(52, 59, 72);\n"
-                                         "}\n"
-                                         "QPushButton:hover {\n"
-                                         "	background-color: rgb(57, 65, 80);\n"
-                                         "	border: 2px solid rgb(61, 70, 86);\n"
-                                         "}\n"
-                                         "QPushButton:pressed {	\n"
-                                         "	background-color: rgb(35, 40, 49);\n"
-                                         "	border: 2px solid rgb(43, 50, 61);\n"
-                                         "}")
+            self.btn_new_game_isus.sizePolicy().hasHeightForWidth())
+        self.btn_new_game_isus.setSizePolicy(sizePolicy5)
+        self.btn_new_game_isus.setMinimumSize(QSize(240, 60))
+        self.btn_new_game_isus.setMaximumSize(QSize(300, 60))
+        font14 = QFont()
+        font14.setPointSize(14)
+        font14.setBold(True)
+        font14.setWeight(75)
+        self.btn_new_game_isus.setFont(font14)
+        self.btn_new_game_isus.setLayoutDirection(Qt.LeftToRight)
+        self.btn_new_game_isus.setStyleSheet(u"QPushButton {\n"
+                                             "	border: 2px solid rgb(52, 59, 72);\n"
+                                             "	border-radius: 5px;	\n"
+                                             "	background-color: rgb(52, 59, 72);\n"
+                                             "}\n"
+                                             "QPushButton:hover {\n"
+                                             "	background-color: rgb(57, 65, 80);\n"
+                                             "	border: 2px solid rgb(61, 70, 86);\n"
+                                             "}\n"
+                                             "QPushButton:pressed {	\n"
+                                             "	background-color: rgb(35, 40, 49);\n"
+                                             "	border: 2px solid rgb(43, 50, 61);\n"
+                                             "}")
 
-        self.verticalLayout_23.addWidget(self.btn_load_game)
+        self.verticalLayout_23.addWidget(self.btn_new_game_isus)
 
         self.verticalLayout_22.addWidget(
             self.frame_15, 0, Qt.AlignHCenter | Qt.AlignTop)
@@ -1604,7 +1618,7 @@ class Ui_MainWindow(object):
                                           "	background-color: rgb(35, 40, 49);\n"
                                           "	border: 2px solid rgb(43, 50, 61);\n"
                                           "}")
-        self.btn_play_white.setIcon(icon3)
+        self.btn_play_white.setIcon(icon6)
         self.btn_play_white.setIconSize(QSize(32, 32))
 
         self.horizontalLayout_13.addWidget(self.btn_play_white)
@@ -1631,7 +1645,7 @@ class Ui_MainWindow(object):
                                           "	background-color: rgb(35, 40, 49);\n"
                                           "	border: 2px solid rgb(43, 50, 61);\n"
                                           "}")
-        self.btn_play_black.setIcon(icon4)
+        self.btn_play_black.setIcon(icon7)
         self.btn_play_black.setIconSize(QSize(32, 32))
 
         self.horizontalLayout_13.addWidget(self.btn_play_black)
@@ -1666,10 +1680,10 @@ class Ui_MainWindow(object):
                                       "	background-color: rgb(35, 40, 49);\n"
                                       "	border: 2px solid rgb(43, 50, 61);\n"
                                       "}")
-        icon5 = QIcon()
-        icon5.addFile(u"icons/chessMenu/chess-random.png",
+        icon8 = QIcon()
+        icon8.addFile(u"icons/chessMenu/chess-random.png",
                       QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_random.setIcon(icon5)
+        self.btn_random.setIcon(icon8)
         self.btn_random.setIconSize(QSize(32, 32))
 
         self.verticalLayout_21.addWidget(self.btn_random)
@@ -1830,10 +1844,10 @@ class Ui_MainWindow(object):
                                         "	background-color: rgb(35, 40, 49);\n"
                                         "	border: 2px solid rgb(43, 50, 61);\n"
                                         "}")
-        icon6 = QIcon()
-        icon6.addFile(u"icons/16x16/cil-arrow-circle-left.png",
+        icon9 = QIcon()
+        icon9.addFile(u"icons/16x16/cil-arrow-circle-left.png",
                       QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_out_game.setIcon(icon6)
+        self.btn_out_game.setIcon(icon9)
         self.stackedWidget.addWidget(self.page_play_chess)
         self.page_detect = QWidget()
         self.page_detect.setObjectName(u"page_detect")
@@ -1845,14 +1859,14 @@ class Ui_MainWindow(object):
         self.chessBoard_detect_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayoutWidget_4 = QWidget(self.chessBoard_detect_frame)
         self.verticalLayoutWidget_4.setObjectName(u"verticalLayoutWidget_4")
-        self.verticalLayoutWidget_4.setGeometry(QRect(0, 0, 531, 351))
+        self.verticalLayoutWidget_4.setGeometry(QRect(0, 0, 531, 331))
         self.camera1_detect_layout = QVBoxLayout(self.verticalLayoutWidget_4)
         self.camera1_detect_layout.setObjectName(u"camera1_detect_layout")
         self.camera1_detect_layout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayoutWidget_6 = QWidget(self.chessBoard_detect_frame)
         self.horizontalLayoutWidget_6.setObjectName(
             u"horizontalLayoutWidget_6")
-        self.horizontalLayoutWidget_6.setGeometry(QRect(60, 350, 371, 371))
+        self.horizontalLayoutWidget_6.setGeometry(QRect(60, 330, 401, 401))
         self.chessBoard_detect_layout = QHBoxLayout(
             self.horizontalLayoutWidget_6)
         self.chessBoard_detect_layout.setObjectName(
@@ -1861,7 +1875,7 @@ class Ui_MainWindow(object):
         self.horizontalLayoutWidget_7 = QWidget(self.chessBoard_detect_frame)
         self.horizontalLayoutWidget_7.setObjectName(
             u"horizontalLayoutWidget_7")
-        self.horizontalLayoutWidget_7.setGeometry(QRect(60, 720, 371, 31))
+        self.horizontalLayoutWidget_7.setGeometry(QRect(60, 730, 401, 31))
         self.horizontalLayout_18 = QHBoxLayout(self.horizontalLayoutWidget_7)
         self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
         self.horizontalLayout_18.setContentsMargins(0, 0, 0, 0)
@@ -1915,7 +1929,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayoutWidget_2 = QWidget(self.chessBoard_detect_frame)
         self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
-        self.verticalLayoutWidget_2.setGeometry(QRect(30, 350, 31, 371))
+        self.verticalLayoutWidget_2.setGeometry(QRect(30, 330, 31, 401))
         self.verticalLayout_16 = QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -1978,21 +1992,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.setFrameShadow(QFrame.Raised)
         self.verticalLayoutWidget_3 = QWidget(self.verticalLayout_17)
         self.verticalLayoutWidget_3.setObjectName(u"verticalLayoutWidget_3")
-        self.verticalLayoutWidget_3.setGeometry(QRect(0, 0, 531, 351))
+        self.verticalLayoutWidget_3.setGeometry(QRect(0, 0, 531, 331))
         self.camera2_detect_layout = QVBoxLayout(self.verticalLayoutWidget_3)
         self.camera2_detect_layout.setObjectName(u"camera2_detect_layout")
         self.camera2_detect_layout.setContentsMargins(0, 0, 0, 0)
         self.frame_22 = QFrame(self.verticalLayout_17)
         self.frame_22.setObjectName(u"frame_22")
-        self.frame_22.setGeometry(QRect(20, 360, 496, 391))
+        self.frame_22.setGeometry(QRect(20, 350, 496, 401))
         self.frame_22.setStyleSheet(u"background-color: rgb(39, 44, 54);\n"
                                     "border-radius: 5px;")
         self.frame_22.setFrameShape(QFrame.StyledPanel)
         self.frame_22.setFrameShadow(QFrame.Raised)
         self.frame_title_wid_5 = QFrame(self.frame_22)
         self.frame_title_wid_5.setObjectName(u"frame_title_wid_5")
-        self.frame_title_wid_5.setGeometry(QRect(0, 0, 496, 35))
-        self.frame_title_wid_5.setMaximumSize(QSize(16777215, 35))
+        self.frame_title_wid_5.setGeometry(QRect(0, 0, 496, 40))
+        self.frame_title_wid_5.setMaximumSize(QSize(16777215, 40))
         self.frame_title_wid_5.setStyleSheet(
             u"background-color: rgb(30, 35, 40);")
         self.frame_title_wid_5.setFrameShape(QFrame.StyledPanel)
@@ -2009,7 +2023,7 @@ class Ui_MainWindow(object):
 
         self.status_detect = QLineEdit(self.frame_22)
         self.status_detect.setObjectName(u"status_detect")
-        self.status_detect.setGeometry(QRect(50, 80, 200, 35))
+        self.status_detect.setGeometry(QRect(50, 100, 200, 35))
         self.status_detect.setMinimumSize(QSize(0, 20))
         self.status_detect.setFont(font11)
         self.status_detect.setLayoutDirection(Qt.LeftToRight)
@@ -2032,12 +2046,12 @@ class Ui_MainWindow(object):
         self.labelBoxBlenderInstalation_7 = QLabel(self.frame_22)
         self.labelBoxBlenderInstalation_7.setObjectName(
             u"labelBoxBlenderInstalation_7")
-        self.labelBoxBlenderInstalation_7.setGeometry(QRect(50, 50, 100, 30))
+        self.labelBoxBlenderInstalation_7.setGeometry(QRect(50, 70, 100, 30))
         self.labelBoxBlenderInstalation_7.setFont(font1)
         self.labelBoxBlenderInstalation_7.setStyleSheet(u"")
         self.btn_open_camera_detect = QPushButton(self.frame_22)
         self.btn_open_camera_detect.setObjectName(u"btn_open_camera_detect")
-        self.btn_open_camera_detect.setGeometry(QRect(300, 60, 160, 40))
+        self.btn_open_camera_detect.setGeometry(QRect(300, 90, 160, 40))
         sizePolicy5.setHeightForWidth(
             self.btn_open_camera_detect.sizePolicy().hasHeightForWidth())
         self.btn_open_camera_detect.setSizePolicy(sizePolicy5)
@@ -2060,7 +2074,7 @@ class Ui_MainWindow(object):
                                                   "}")
         self.btn_capture_detect = QPushButton(self.frame_22)
         self.btn_capture_detect.setObjectName(u"btn_capture_detect")
-        self.btn_capture_detect.setGeometry(QRect(70, 130, 160, 40))
+        self.btn_capture_detect.setGeometry(QRect(70, 150, 160, 40))
         sizePolicy5.setHeightForWidth(
             self.btn_capture_detect.sizePolicy().hasHeightForWidth())
         self.btn_capture_detect.setSizePolicy(sizePolicy5)
@@ -2083,7 +2097,7 @@ class Ui_MainWindow(object):
                                               "}")
         self.btn_close_camera_detect = QPushButton(self.frame_22)
         self.btn_close_camera_detect.setObjectName(u"btn_close_camera_detect")
-        self.btn_close_camera_detect.setGeometry(QRect(300, 120, 160, 40))
+        self.btn_close_camera_detect.setGeometry(QRect(300, 150, 160, 40))
         sizePolicy5.setHeightForWidth(
             self.btn_close_camera_detect.sizePolicy().hasHeightForWidth())
         self.btn_close_camera_detect.setSizePolicy(sizePolicy5)
@@ -2106,7 +2120,7 @@ class Ui_MainWindow(object):
                                                    "}")
         self.status_fen_detect = QLineEdit(self.frame_22)
         self.status_fen_detect.setObjectName(u"status_fen_detect")
-        self.status_fen_detect.setGeometry(QRect(50, 250, 400, 40))
+        self.status_fen_detect.setGeometry(QRect(50, 270, 400, 40))
         self.status_fen_detect.setMinimumSize(QSize(0, 20))
         self.status_fen_detect.setFont(font11)
         self.status_fen_detect.setLayoutDirection(Qt.LeftToRight)
@@ -2129,12 +2143,12 @@ class Ui_MainWindow(object):
         self.labelBoxBlenderInstalation_8 = QLabel(self.frame_22)
         self.labelBoxBlenderInstalation_8.setObjectName(
             u"labelBoxBlenderInstalation_8")
-        self.labelBoxBlenderInstalation_8.setGeometry(QRect(50, 220, 100, 30))
+        self.labelBoxBlenderInstalation_8.setGeometry(QRect(50, 240, 100, 30))
         self.labelBoxBlenderInstalation_8.setFont(font1)
         self.labelBoxBlenderInstalation_8.setStyleSheet(u"")
         self.btn_reset_detect = QPushButton(self.frame_22)
         self.btn_reset_detect.setObjectName(u"btn_reset_detect")
-        self.btn_reset_detect.setGeometry(QRect(50, 300, 120, 30))
+        self.btn_reset_detect.setGeometry(QRect(50, 320, 120, 30))
         sizePolicy5.setHeightForWidth(
             self.btn_reset_detect.sizePolicy().hasHeightForWidth())
         self.btn_reset_detect.setSizePolicy(sizePolicy5)
@@ -2821,7 +2835,7 @@ class Ui_MainWindow(object):
         self.label_70.setFont(font11)
         self.btn_send_pick_place = QPushButton(self.frame_9)
         self.btn_send_pick_place.setObjectName(u"btn_send_pick_place")
-        self.btn_send_pick_place.setGeometry(QRect(270, 430, 150, 25))
+        self.btn_send_pick_place.setGeometry(QRect(290, 410, 150, 25))
         sizePolicy5.setHeightForWidth(
             self.btn_send_pick_place.sizePolicy().hasHeightForWidth())
         self.btn_send_pick_place.setSizePolicy(sizePolicy5)
@@ -2888,6 +2902,13 @@ class Ui_MainWindow(object):
                                                "	background-color: rgb(35, 40, 49);\n"
                                                "	border: 2px solid rgb(43, 50, 61);\n"
                                                "}")
+        self.label_76 = QLabel(self.frame_9)
+        self.label_76.setObjectName(u"label_76")
+        self.label_76.setGeometry(QRect(240, 450, 40, 20))
+        self.label_76.setFont(font11)
+        self.comboBox_piece = QComboBox(self.frame_9)
+        self.comboBox_piece.setObjectName(u"comboBox_piece")
+        self.comboBox_piece.setGeometry(QRect(290, 440, 100, 30))
 
         self.horizontalLayout_14.addWidget(self.frame_4)
 
@@ -3249,10 +3270,10 @@ class Ui_MainWindow(object):
         self.pushButton = QPushButton(self.frame_content_wid_1)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(150, 30))
-        font14 = QFont()
-        font14.setFamily(u"Segoe UI")
-        font14.setPointSize(9)
-        self.pushButton.setFont(font14)
+        font15 = QFont()
+        font15.setFamily(u"Segoe UI")
+        font15.setPointSize(9)
+        self.pushButton.setFont(font15)
         self.pushButton.setStyleSheet(u"QPushButton {\n"
                                       "	border: 2px solid rgb(52, 59, 72);\n"
                                       "	border-radius: 5px;	\n"
@@ -3266,10 +3287,10 @@ class Ui_MainWindow(object):
                                       "	background-color: rgb(35, 40, 49);\n"
                                       "	border: 2px solid rgb(43, 50, 61);\n"
                                       "}")
-        icon7 = QIcon()
-        icon7.addFile(u":/16x16/icons/16x16/cil-folder-open.png",
-                      QSize(), QIcon.Normal, QIcon.Off)
-        self.pushButton.setIcon(icon7)
+        icon10 = QIcon()
+        icon10.addFile(u":/16x16/icons/16x16/cil-folder-open.png",
+                       QSize(), QIcon.Normal, QIcon.Off)
+        self.pushButton.setIcon(icon10)
 
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
 
@@ -3362,7 +3383,7 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(
             u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 323, 222))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 286, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -3391,7 +3412,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setFont(font14)
+        self.comboBox.setFont(font15)
         self.comboBox.setAutoFillBackground(False)
         self.comboBox.setStyleSheet(u"QComboBox{\n"
                                     "	background-color: rgb(27, 29, 35);\n"
@@ -3449,10 +3470,10 @@ class Ui_MainWindow(object):
                                              "	color: rgb(210, 210, 210);\n"
                                              "	background-color: rgb(52, 58, 71);\n"
                                              "}")
-        icon8 = QIcon()
-        icon8.addFile(u":/16x16/icons/16x16/cil-link.png",
-                      QSize(), QIcon.Normal, QIcon.Off)
-        self.commandLinkButton.setIcon(icon8)
+        icon11 = QIcon()
+        icon11.addFile(u":/16x16/icons/16x16/cil-link.png",
+                       QSize(), QIcon.Normal, QIcon.Off)
+        self.commandLinkButton.setIcon(icon11)
 
         self.gridLayout_2.addWidget(self.commandLinkButton, 1, 6, 1, 1)
 
@@ -3731,7 +3752,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(3)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -3807,10 +3828,10 @@ class Ui_MainWindow(object):
             "MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">1</span></p></body></html>", None))
         self.labelBoxBlenderInstalation_4.setText(
             QCoreApplication.translate("MainWindow", u"SETUP", None))
-        self.btn_send_grip_close_process.setText(
-            QCoreApplication.translate("MainWindow", u"Gripper Close", None))
-        self.btn_send_grip_open_process.setText(
-            QCoreApplication.translate("MainWindow", u"Gripper Open", None))
+        self.btn_send_redo_process.setText(
+            QCoreApplication.translate("MainWindow", u"Redo", None))
+        self.btn_send_undo_process.setText(
+            QCoreApplication.translate("MainWindow", u"Undo", None))
         self.btn_send_startstop_process.setText(
             QCoreApplication.translate("MainWindow", u"Start/Stop", None))
         self.btn_send_chess_home_process.setText(
@@ -3863,8 +3884,8 @@ class Ui_MainWindow(object):
             "MainWindow", u"Game Chess AI", None))
         self.btn_new_game.setText(QCoreApplication.translate(
             "MainWindow", u"New Game", None))
-        self.btn_load_game.setText(
-            QCoreApplication.translate("MainWindow", u" Game", None))
+        self.btn_new_game_isus.setText(QCoreApplication.translate(
+            "MainWindow", u"New Game [ISUS]", None))
         self.label_10.setText(QCoreApplication.translate(
             "MainWindow", u"Choose side you want to play", None))
         self.btn_play_white.setText(
@@ -4047,6 +4068,8 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", u"Set Zero Field", None))
         self.btn_send_chess_home.setText(
             QCoreApplication.translate("MainWindow", u"Chess Home", None))
+        self.label_76.setText(QCoreApplication.translate(
+            "MainWindow", u"Piece", None))
         self.labelBoxBlenderInstalation_2.setText(
             QCoreApplication.translate("MainWindow", u"Status", None))
         self.feedback_angular_joint_2.setText(
