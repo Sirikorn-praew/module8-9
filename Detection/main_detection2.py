@@ -24,6 +24,7 @@ import tensorflow as tf
 import mediapipe as mp
 # import keras
 
+
 mp_hands = mp.solutions.hands
 
 tb=variable.to_trackback
@@ -32,6 +33,13 @@ tb_top=tb()
 get_m = variable.get_matrix_variable
 top_data = get_m()
 side_data = get_m()
+
+cap_top = MediaPipe_check_Hand()
+# cap_side = MediaPipe_check_Hand(1)
+modelE4_top = EfficientNetModel(
+    '\Detection\checkpoint_top', (380, 380))
+modelE4 = EfficientNetModel(
+    '.\Detection\checkpoint_data', (380, 380))
 
 class MediaPipe_check_Hand:
     def __init__(self):
@@ -69,8 +77,7 @@ class MediaPipe_check_Hand:
                 return 'Hand'
 
 
-cap_top = MediaPipe_check_Hand()
-# cap_side = MediaPipe_check_Hand(1)
+
 
 
 class EfficientNetModel:
@@ -95,12 +102,10 @@ class EfficientNetModel:
         return tf.argmax(self.model.predict(image_array), axis=1)
 
 
-# modelE4 = EfficientNetModel(
-#     '.\Detection\checkpoint_hyper', (380, 380))
+
 # modelE4_top = EfficientNetModel(
 #     '.\Detection\checkpoint_top', (380, 380))
-modelE4_top = EfficientNetModel(
-    '\Detection\checkpoint_top', (380, 380))
+
 
 # print(model.summary)
 # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
