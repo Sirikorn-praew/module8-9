@@ -730,9 +730,9 @@ class MainWindow(QMainWindow):
             self.capture1 = cv2.VideoCapture(2, cv2.CAP_DSHOW)
             self.capture1.set(3, 1280)
             self.capture1.set(4, 1024)
-            _, self.image_top = copy.deepcopy(
+            _, self.image_side = copy.deepcopy(
                 self.capture1.read())
-            self.image_top = np.array(self.image_top)
+            self.image_side = np.array(self.image_side)
             self.capture1.set(cv2.CAP_PROP_FRAME_WIDTH,
                               self.video_size.width())
             self.capture1.set(cv2.CAP_PROP_FRAME_HEIGHT,
@@ -753,9 +753,9 @@ class MainWindow(QMainWindow):
             # set new dimensionns to cam object (not cap)
             self.capture2.set(3, 1280)
             self.capture2.set(4, 1024)
-            _, self.image_side = copy.deepcopy(
+            _, self.image_top = copy.deepcopy(
                 self.capture2.read())
-            self.image_side = np.array(self.image_side)
+            self.image_top = np.array(self.image_top)
             self.capture2.set(cv2.CAP_PROP_FRAME_WIDTH,
                               self.video_size.width())
             self.capture2.set(cv2.CAP_PROP_FRAME_HEIGHT,
@@ -820,7 +820,7 @@ class MainWindow(QMainWindow):
             cv2.imwrite('image_top.jpg', self.image_top)
 
             fen = main_chess_piece(
-                self.image_top, self.image_side, detect, modelE4)
+                self.image_side, self.image_top, detect, modelE4)
         elif page == 'set':
             fen = setting_chess.starting_fen
             self.board_process.set_fen(fen)
@@ -832,7 +832,7 @@ class MainWindow(QMainWindow):
             cv2.imwrite('image_top.jpg', self.image_top)
 
             user_is_black = 1 if self.board_process.user_is_white == False else 0
-            fen = use_trackback(self.image_side, detect,
+            fen = use_trackback(self.image_top, detect,
                                 fen_before, user_is_black, modelE4_top)
             print("out", fen)
 
