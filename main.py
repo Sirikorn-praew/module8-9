@@ -820,7 +820,7 @@ class MainWindow(QMainWindow):
             cv2.imwrite('image_top.jpg', self.image_top)
 
             fen = main_chess_piece(
-                self.image_side, self.image_top, detect, modelE4)
+                self.image_side, self.image_top, detect, modelE4, modelE4_top)
         elif page == 'set':
             fen = setting_chess.starting_fen
             self.board_process.set_fen(fen)
@@ -1034,6 +1034,8 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
+    ISUS_UART.setupUart()
 
     modelE4_top = EfficientNetModel(
         '.\Detection\checkpoint_top', (380, 380))
@@ -1042,8 +1044,6 @@ if __name__ == "__main__":
     print('finish')
 
     app = QApplication(sys.argv)
-    ISUS_UART = Serial_Comunication_ISUS.Uart_ISUS()
-    ISUS_UART.setupUart()
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeui.ttf')
     QtGui.QFontDatabase.addApplicationFont('fonts/segoeuib.ttf')
     window = MainWindow()

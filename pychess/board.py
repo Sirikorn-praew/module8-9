@@ -435,6 +435,8 @@ class SearchThread(QThread):
     def run(self):
         self.board.disable_pieces()
         self.board.parent.ui.status_process.setText('Searching move...')
+        self.board.parent.ui.status_turn_process.setText(
+            self.board.parent.showTurn())
 
         move = self.board.agent.playMove(debug=True)
 

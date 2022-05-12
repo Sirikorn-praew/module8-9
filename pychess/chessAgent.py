@@ -11,7 +11,7 @@ from pychess.evaluation import evaluateBoard, moveValue, checkEndGame
 
 class ChessAgent:
 
-    def __init__(self, gameState, max_depth=3):
+    def __init__(self, gameState, max_depth=5):
         self.debug_info = {}
 
         self.gamestate = gameState
