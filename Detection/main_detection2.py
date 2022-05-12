@@ -106,7 +106,8 @@ class EfficientNetModel:
         return cv2.imread(image_path)
 
     def resize_image(self, image):
-        return cv2.resize(image, (self.input_shape[1], self.input_shape[0]), interpolation=cv2.INTER_CUBIC)
+        return cv2.resize(image, (380, 380), fx=0, fy=0, interpolation=cv2.INTER_CUBIC)
+        # return cv2.resize(image, (380, 380), interpolation=cv2.INTER_CUBIC)
 
     def make_prediction(self, image):
         resized_image = self.resize_image(image)
@@ -516,13 +517,13 @@ def compare_move(old_board, new_board):
     return change
 
 
-def crop_and_predict(modelE4):
+def crop_and_predict(modelE4, modelE4_top):
     # crop
     print('crop')
     top_data.list_of_image_new = []
     side_data.list_of_image_new = []
     for group in range(len(top_data.new_matrix_to_crop)):
-
+        # print(group, top_data.new_matrix_to_crop[group])
         crop_top = crop_perspective_for_dataset(
             top_data.new_matrix_to_crop[group], top_data.clear_image.copy())
         top_data.list_of_image_new.append(crop_top)
@@ -534,18 +535,34 @@ def crop_and_predict(modelE4):
     print('predict')
     ans = []
     for img in side_data.list_of_image_new:
+        # print(len(img))
         ans.append(modelE4.make_prediction(img))
         pred = tf.concat(ans, axis=0)
+        # print(pred)
+    print('test pred')
+    print(pred)
     mappings = {0: 'b', 1: '.', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
     pred = np.array(pred)
     pred = [mappings[i] for i in pred]
     print('to str', pred)
-    index_not_empty = []
-    for index in range(len(pred)):
-        if pred[index] != '.':
-            index_not_empty.append(index)
-    print('index_not_empty', len(index_not_empty), index_not_empty)
+    # index_not_empty = []
+    # for index in range(len(pred)):
+    #     if pred[index] != '.':
+    #         index_not_empty.append(index)
+    # print('index_not_empty', len(index_not_empty), index_not_empty)
 
+    ans_top = []
+    for img_top in top_data.list_of_image_new:
+        ans_top.append(modelE4_top.make_prediction(img_top))
+        pred_empty = tf.concat(ans_top, axis=0)
+
+    index_not_empty = []
+    for index in range(len(pred_empty)):
+        if pred_empty[index] == 1:
+            index_not_empty.append(index)
+        else:
+            pred[index] = '.'
+    print('index_not_empty', len(index_not_empty), index_not_empty)
     # classify_color
     print('evaluate color')
     list_of_images_to_clssify = []
@@ -567,8 +584,10 @@ def crop_and_predict(modelE4):
 
 
 def crop_and_predict_empty(modelE4_top):
+
     print('crop')
     top_data.list_of_image_new = []
+
     for group in range(len(top_data.new_matrix_to_crop)):
         crop_top = crop_perspective_for_dataset(
             top_data.new_matrix_to_crop[group], top_data.clear_image.copy())
@@ -619,31 +638,31 @@ def save_plot_point_image_top():
 
 
 # new_detect==1 is use detection board
-def main_chess_piece(frame_side, frame_top, new_detect, model):
+def main_chess_piece(frame_side, frame_top, new_detect, model, model_top):
 
     check_hand_mediaPipe = cap_top.check_hand(frame_top)
     print('detect', check_hand_mediaPipe)
     if check_hand_mediaPipe == 'Hand' or check_hand_mediaPipe == None:
         return None
 
-    try:
-        if new_detect == 1:
-            top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
-                frame_top)
-            side_data.clear_image, side_data.matrix, side_data.new_matrix, side_data.new_matrix_to_crop = finding_new_matrix(
-                frame_side)
+    # try:
+    if new_detect == 1:
+        top_data.clear_image, top_data.matrix, top_data.new_matrix, top_data.new_matrix_to_crop = finding_new_matrix(
+            frame_top)
+        side_data.clear_image, side_data.matrix, side_data.new_matrix, side_data.new_matrix_to_crop = finding_new_matrix(
+            frame_side)
 
-        # save_plot_point_image()
+    # save_plot_point_image()
 
-        top_data.list_of_image_old = copy.deepcopy(top_data.list_of_image_new)
-        side_data.list_of_image_old = copy.deepcopy(
-            side_data.list_of_image_new)
+    top_data.list_of_image_old = copy.deepcopy(top_data.list_of_image_new)
+    side_data.list_of_image_old = copy.deepcopy(
+        side_data.list_of_image_new)
 
-        return crop_and_predict(model)
+    return crop_and_predict(model, model_top)
 
-    except:
-        print('sad')
-        return None
+    # except:
+    #     print('sad')
+    #     return None
 
 
 # def main_chess_piece_old_point(frame_side, frame_top):

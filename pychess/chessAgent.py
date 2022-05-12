@@ -19,8 +19,8 @@ class ChessAgent:
         self.max_depth = max_depth
         self.mate_Score = 1000000000
         self.mate_Threshold = 999000000
-        # self.size_table = 1e6
-        # self.tt_table = OrderedDict()
+        self.size_table = 1e6
+        self.tt_table = OrderedDict()
 
     def playMove(self, debug=True):
 
@@ -51,12 +51,12 @@ class ChessAgent:
     def minimax_root(self, depth, board):
         # check zobrist hash key
         key = chess.polyglot.zobrist_hash(board)
-        # if key in self.tt_table:
-        #     print("Have key in TT_table")
-        #     move = self.tt_table.get(key)
-        #     print(move)
-        #     # move = chess.Move.from_uci(move_uci)
-        #     return move
+        if key in self.tt_table:
+            print("Have key in TT_table")
+            move = self.tt_table.get(key)
+            print(move)
+            # move = chess.Move.from_uci(move_uci)
+            return move
 
         # White always wants to maximize and black to minimize
         # the board score according to evaluateBoard()
@@ -85,9 +85,9 @@ class ChessAgent:
             best_move_found = moves[index_valueBest]
 
         # save zobrist hash key in TT table
-        # if (len(self.tt_table) > self.size_table):
-        #     self.tt_table.popitem(last=False)
-        # self.tt_table[key] = best_move_found
+        if (len(self.tt_table) > self.size_table):
+            self.tt_table.popitem(last=False)
+        self.tt_table[key] = best_move_found
 
         return best_move_found
 

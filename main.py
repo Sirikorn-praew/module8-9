@@ -17,9 +17,6 @@
 ##
 ################################################################################
 
-import traceback
-from Comunication import Serial_Comunication_ISUS
-import re
 import sys
 import platform
 from PySide2 import QtCore, QtGui, QtWidgets
@@ -46,19 +43,11 @@ from pychess.board import ChessBoard
 from pychess.info import Info
 
 # # DETECTION
-# import tensorflow as tf
-# from tensorflow.python.client import device_lib
-import mediapipe as mp
-
-
 from Detection.main_detection2 import *
 from Detection import variable
 
-# print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-# device_lib.list_local_devices()
-
-
 # COMUNICATION
+from Comunication import Serial_Comunication_ISUS
 
 list_name = {chess.KING: 1, chess.QUEEN: 2, chess.ROOK: 3,
              chess.KNIGHT: 3, chess.BISHOP: 3, chess.PAWN: 4}
@@ -86,13 +75,6 @@ class MainWindow(QMainWindow):
 
         self.board_detect = ChessBoard(self)
         self.board_detect.sqr_size = 360/8
-
-        # self.maxAngular = 18  # deg/sec
-        # self.station = []  # 1-10
-
-        # Serial
-        self.port = "COM"
-        # self.ser = serial.Serial(port='COM6', baudrate=512000)
 
         # PRINT ==> SYSTEM
         print('System: ' + platform.system())
@@ -807,8 +789,6 @@ class MainWindow(QMainWindow):
 
     def capture_camera(self, status, detect, page):
         self.ui.status_process.setText('Capturing and predicting')
-        # self.setup_camera1(self.cam1_detect_label)
-        # self.setup_camera2(self.cam2_detect_label)
 
         fen_before = self.board_process.gamestate.getFen()
         print(fen_before, detect)
@@ -836,11 +816,6 @@ class MainWindow(QMainWindow):
                                 fen_before, user_is_black, modelE4_top)
             print("out", fen)
 
-        # fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-        # fen = '8/6P1/7k/4B3/4B2K/8/8/8 w - - 0 1'
-        # fen = '8/6n1/pp4p1/4p1p1/6p1/8/8/R4r1r'
-        # fen = None
-
         if fen != None:
             self.ui.status_fen_detect.setText(fen)
             self.ui.status_detect.setText('Detected!')
@@ -858,11 +833,6 @@ class MainWindow(QMainWindow):
         elif status == 'process':
             self.board_process.showfen(fen)
             self.stackfen = fen
-            # board_after = chess.Board(fen)
-            # move = self.get_move(
-            #     self.board_process.gamestate.boardPlay, board_after, self.board_process.gamestate.boardPlay.turn)
-            # # move = chess.Move.from_uci(move_uci)
-            # self.board_process.player_move(move)
 
     def resetBoardDetect(self):
         fen = '8/8/8/8/8/8/8/8'  # w - - 0 1
@@ -883,16 +853,6 @@ class MainWindow(QMainWindow):
 
     def resetStatus(self):
         ISUS_UART.resetStatus()
-
-    def waitFeedback(self, rowiR, columniR, rowfR, columnfR):
-        ISUS_UART.Uart_Read()
-        # print(ISUS_UART.getStatus())
-        if ISUS_UART.getStatus() == 99:
-            ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)
-            print("ft")
-            # self.timer.stop()
-            # self.timer.deleteLater()
-            ISUS_UART.resetStatus()
 
     def normally_move(self, from_square, to_square, piece):
         rowi = from_square[0]
@@ -928,22 +888,9 @@ class MainWindow(QMainWindow):
             columniR = 8
             rowfR = "f"
             columnfR = 8
-        # self.timer = QTimer()
-        # ISUS_UART.Chess_Pick(rowiK, columniK, rowfK, columnfK, 1)
+
         ISUS_UART.Chess_Pick2(rowiK, columniK, rowfK,
                               columnfK, rowiR, columniR, rowfR, columnfR, 1, 3)
-
-        # lambda: self.waitFeedback(ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3))
-        # self.timer.timeout.connect(lambda: self.waitFeedback(
-        #     rowiR, columniR, rowfR, columnfR, 3))
-
-        # self.timer.timeout.connect(lambda: waitFeedback(
-        #     ft=ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)))
-        # QTimer.singleShot(200, lambda: ISUS_UART.Chess_Pick(
-        #     rowiR, columniR, rowfR, columnfR, 3))
-
-        # self.timer.start(2000)
-        # ISUS_UART.Chess_Pick(rowiR, columniR, rowfR, columnfR, 3)
 
     def promotion_move(self, from_square, to_square):
         rowi = from_square[0]
@@ -959,11 +906,6 @@ class MainWindow(QMainWindow):
         columnf = int(to_square[1])
         ISUS_UART.Chess_Drop(rowi, columni, rowf, columnf, rowf,
                              columnf, list_name[piece_move], list_name[piece_captured])
-        # ISUS_UART.Chess_Drop(
-        #     rowf, columnf, list_name[piece_captured])
-        # ISUS_UART.Uart_Read()
-        # ISUS_UART.Chess_Pick(
-        #     rowi, columni, rowf, columnf, list_name[piece_move])
 
     def en_passant_move(self, from_square, to_square, turn):
         rowi = from_square[0]
@@ -971,16 +913,12 @@ class MainWindow(QMainWindow):
         rowf = to_square[0]
         columnf = int(to_square[1])
         if turn == chess.WHITE:
-            # ISUS_UART.Chess_Drop(rowf, columnf+1, 4)
             ISUS_UART.Chess_Drop(rowi, columni, rowf,
                                  columnf, rowf, columnf+1, 4, 4)
 
         else:
-            # ISUS_UART.Chess_Drop(rowf, columnf-1, 4)
             ISUS_UART.Chess_Drop(rowi, columni, rowf,
                                  columnf, rowf, columnf-1, 4, 4)
-        # ISUS_UART.Uart_Read()
-        # ISUS_UART.Chess_Pick(rowi, columni, rowf, columnf, 4)
 
     ## ==> END ##
 
