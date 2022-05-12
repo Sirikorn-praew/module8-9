@@ -516,7 +516,7 @@ def compare_move(old_board, new_board):
     return change
 
 
-def crop_and_predict(modelE4,modelE4_top):
+def crop_and_predict(modelE4):
     # crop
     print('crop')
     top_data.list_of_image_new = []
@@ -535,22 +535,15 @@ def crop_and_predict(modelE4,modelE4_top):
     ans = []
     for img in side_data.list_of_image_new:
         ans.append(modelE4.make_prediction(img))
-    pred = tf.concat(ans, axis=0)
+        pred = tf.concat(ans, axis=0)
     mappings = {0: 'b', 1: '.', 2: 'k', 3: 'n', 4: 'p', 5: 'q', 6: 'r'}
     pred = np.array(pred)
     pred = [mappings[i] for i in pred]
     print('to str', pred)
-
-    ans_top=[]
-    for img_top in top_data.list_of_image_new:
-        ans_top.append(modelE4_top.make_prediction(img_top))
-    pred_empty = tf.concat(ans_top, axis=0)
-
     index_not_empty = []
-    for index in range(len(pred_empty)):
-        if pred[index] == 1:
+    for index in range(len(pred)):
+        if pred[index] != '.':
             index_not_empty.append(index)
-        else: pred[index]='.'
     print('index_not_empty', len(index_not_empty), index_not_empty)
 
     # classify_color
@@ -626,7 +619,7 @@ def save_plot_point_image_top():
 
 
 # new_detect==1 is use detection board
-def main_chess_piece(frame_side, frame_top, new_detect, model,model_top):
+def main_chess_piece(frame_side, frame_top, new_detect, model):
 
     check_hand_mediaPipe = cap_top.check_hand(frame_top)
     print('detect', check_hand_mediaPipe)
@@ -646,8 +639,7 @@ def main_chess_piece(frame_side, frame_top, new_detect, model,model_top):
         side_data.list_of_image_old = copy.deepcopy(
             side_data.list_of_image_new)
 
-        crop_and_predict(model)
-        return 
+        return crop_and_predict(model)
 
     except:
         print('sad')
